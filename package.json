@@ -1,0 +1,26 @@
+{
+  "name": "km",
+  "version": "1.0.0",
+  "description": "Esta aplicación de escritorio multiplataforma (Windows y macOS) está construida con Electron y TypeScript. Permite recopilar datos introducidos por el usuario y generar un archivo XLSX.",
+  "main": "dist/main.js",
+  "scripts": {
+    "start": "tsc && electron .",
+    "build": "tsc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "electron": "^37.4.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1",
+    "xlsx": "^0.18.5"
+  }
+}

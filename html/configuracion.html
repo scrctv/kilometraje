@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=400, initial-scale=1.0">
+  <title>Configuración</title>
+  <link rel="stylesheet" href="../estilos/configuracion.css">
+  <link rel="stylesheet" href="../estilos/fragment_guardado.css">
+</head>
+<body>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="guardado">Direcciónes de guardado</button>
+    <button class="tab-btn" data-tab="kilometraje">Kilometraje</button>
+  </div>
+  <div class="tab-content" id="guardado">
+    <h2>Direcciónes de guardado</h2>
+    <div class="seccion">
+      <h3>Dirección del archivo original</h3>
+      <div class="input-group">
+        <input type="text" id="original-path" readonly placeholder="Selecciona la plantilla Excel...">
+        <button id="btn-original">Seleccionar archivo</button>
+      </div>
+    </div>
+    <div class="seccion">
+      <h3>Dirección de guardado</h3>
+      <div class="input-group">
+        <input type="text" id="destino-path" readonly placeholder="Selecciona la carpeta de destino...">
+        <button id="btn-destino">Seleccionar carpeta</button>
+      </div>
+    </div>
+  </div>
+  <div class="tab-content hidden" id="kilometraje">
+    <h2>Kilometraje</h2>
+    <div class="seccion">
+      <label for="unidad-km">UNIDAD POR KM</label>
+      <input type="number" id="unidad-km" name="unidad-km" min="0" max="999.999" step="0.001" maxlength="7" placeholder="Ej: 1.234" inputmode="decimal">
+      <small>Hasta 3 cifras y 3 decimales</small>
+      <button id="btn-guardar-km">Guardar</button>
+    </div>
+  </div>
+  <script src="../js/configuracion.js"></script>
+</body>
+</html>

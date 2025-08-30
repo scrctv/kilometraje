@@ -1,0 +1,61 @@
+.seccion label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.seccion input[type="number"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  background: #f9f9f9;
+  margin-bottom: 4px;
+}
+
+.seccion small {
+  color: #666;
+  font-size: 0.95em;
+}
+body {
+  background: #f4f4f4;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.tabs {
+  display: flex;
+  border-bottom: 2px solid #1976d2;
+  margin-bottom: 20px;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 15px 0;
+  background: #e3e3e3;
+  border: none;
+  border-bottom: 2px solid transparent;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s, border-bottom 0.2s;
+}
+
+.tab-btn.active {
+  background: #fff;
+  border-bottom: 2px solid #1976d2;
+  color: #1976d2;
+}
+
+.tab-content {
+  display: block;
+  padding: 20px;
+  background: #fff;
+  border-radius: 0 0 8px 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.tab-content.hidden {
+  display: none;
+}
