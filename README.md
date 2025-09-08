@@ -1,6 +1,6 @@
 # KM Electron App
 
-Esta aplicación de escritorio multiplataforma (Windows y macOS) está construida con Electron y TypeScript. Permite recopilar datos introducidos por el usuario y generar un archivo XLSX.
+Esta aplicación de escritorio multiplataforma (Windows y macOS) está construida con Electron y TypeScript. Permite recopilar datos introducidos por el usuario y generar un archivo DOCX (Word) rellenando automáticamente una tabla en una plantilla .docx.
 
 ## Requisitos previos
 - Node.js (https://nodejs.org/) versión recomendada LTS
@@ -22,8 +22,8 @@ Esta aplicación de escritorio multiplataforma (Windows y macOS) está construid
 - `main.ts`: Proceso principal de Electron
 - `renderer.tsx`: Interfaz de usuario (React/TSX)
 
-## Generación de archivos XLSX
-Se utiliza la librería `xlsx` para crear archivos Excel.
+## Generación de archivos DOCX
+Se utiliza la librería `docxtemplater` para rellenar tablas en archivos Word (.docx) a partir de los datos introducidos por el usuario.
 
 ---
 

@@ -5,7 +5,7 @@ import * as path from 'path';
 
 ipcMain.on('open-datosusuario-window', () => {
   const datosWin = new BrowserWindow({
-    width: 500,
+    width: 665,
     height: 600,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
@@ -24,6 +24,38 @@ ipcMain.handle('get-unidad-por-km', async () => {
       const data = fs.readFileSync(filePath, 'utf-8');
       const json = JSON.parse(data);
       return json.unidadPorKm || '';
+    }
+    return '';
+  } catch (e) {
+    return '';
+  }
+});
+
+// Handler para obtener la ruta de plantilla guardada
+ipcMain.handle('get-ruta-dotx', async () => {
+  try {
+    const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+    const filePath = path.join(configDir, 'ruta-dotx.json');
+    if (fs.existsSync(filePath)) {
+      const data = fs.readFileSync(filePath, 'utf-8');
+      const json = JSON.parse(data);
+      return json.rutaDotx || '';
+    }
+    return '';
+  } catch (e) {
+    return '';
+  }
+});
+
+// Handler para obtener la ruta de destino guardada
+ipcMain.handle('get-ruta-destino', async () => {
+  try {
+    const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+    const filePath = path.join(configDir, 'ruta-destino.json');
+    if (fs.existsSync(filePath)) {
+      const data = fs.readFileSync(filePath, 'utf-8');
+      const json = JSON.parse(data);
+      return json.rutaDestino || '';
     }
     return '';
   } catch (e) {
@@ -66,7 +98,7 @@ ipcMain.handle('dialog:openFile', async () => {
   const { canceled, filePaths } = await dialog.showOpenDialog({
     properties: ['openFile'],
     filters: [
-      { name: 'Excel', extensions: ['xlsx', 'xls'] },
+      { name: 'Plantillas Word', extensions: ['dotx', 'docx'] },
       { name: 'Todos los archivos', extensions: ['*'] }
     ]
   });
@@ -95,6 +127,34 @@ ipcMain.handle('dialog:openFolder', async () => {
       return false;
     }
   });
+  
+    ipcMain.handle('save-ruta-dotx', async (event, ruta) => {
+      try {
+        const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+        if (!fs.existsSync(configDir)) {
+          fs.mkdirSync(configDir, { recursive: true });
+        }
+        const filePath = path.join(configDir, 'ruta-dotx.json');
+        fs.writeFileSync(filePath, JSON.stringify({ rutaDotx: ruta }, null, 2), 'utf-8');
+        return true;
+      } catch (e) {
+        return false;
+      }
+    });
+  
+    ipcMain.handle('save-ruta-destino', async (event, ruta) => {
+      try {
+        const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+        if (!fs.existsSync(configDir)) {
+          fs.mkdirSync(configDir, { recursive: true });
+        }
+        const filePath = path.join(configDir, 'ruta-destino.json');
+        fs.writeFileSync(filePath, JSON.stringify({ rutaDestino: ruta }, null, 2), 'utf-8');
+        return true;
+      } catch (e) {
+        return false;
+      }
+    });
 
   ipcMain.handle('save-datos-usuario', async (event, data) => {
     try {

@@ -1,3 +1,44 @@
+.campo-linea {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+}
+.form-usuario fieldset:first-of-type label,
+.form-usuario fieldset:first-of-type input {
+  display: block;
+  width: 100%;
+}
+.form-usuario fieldset:first-of-type label {
+  margin-top: 10px;
+  margin-bottom: 2px;
+}
+.form-usuario fieldset:first-of-type input {
+  margin-bottom: 4px;
+}
+.form-usuario fieldset {
+  border: 1px solid #bbb;
+  border-radius: 6px;
+  margin-bottom: 18px;
+  padding: 12px 16px 10px 16px;
+}
+.form-usuario legend {
+  font-weight: bold;
+  color: #1976d2;
+  margin-bottom: 8px;
+  font-size: 1.08em;
+}
+.checks-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 18px;
+  margin-bottom: 10px;
+}
+.checks-group label {
+  font-weight: normal;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
 .form-usuario {
   display: flex;
   flex-direction: column;
@@ -6,7 +47,7 @@
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-  max-width: 350px;
+  max-width: 900px;
   margin: 40px auto;
 }
 .form-usuario label {
