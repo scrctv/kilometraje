@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
 electron_1.contextBridge.exposeInMainWorld('electronAPI', {
     openConfigWindow: () => electron_1.ipcRenderer.send('open-config-window'),
+    openCrearWindow: () => electron_1.ipcRenderer.send('open-crear-window'),
     openFile: () => electron_1.ipcRenderer.invoke('dialog:openFile'),
     openFolder: () => electron_1.ipcRenderer.invoke('dialog:openFolder'),
     saveUnidadPorKm: (valor) => electron_1.ipcRenderer.invoke('save-unidad-por-km', valor),
@@ -13,5 +14,9 @@ electron_1.contextBridge.exposeInMainWorld('electronAPI', {
     saveRutaDotx: (ruta) => electron_1.ipcRenderer.invoke('save-ruta-dotx', ruta),
     saveRutaDestino: (ruta) => electron_1.ipcRenderer.invoke('save-ruta-destino', ruta),
     getRutaDotx: () => electron_1.ipcRenderer.invoke('get-ruta-dotx'),
-    getRutaDestino: () => electron_1.ipcRenderer.invoke('get-ruta-destino')
+    getRutaDestino: () => electron_1.ipcRenderer.invoke('get-ruta-destino'),
+    guardarTurnos: (data, mes, anio) => electron_1.ipcRenderer.invoke('guardar-turnos', data, mes, anio),
+    showConfirm: (mensaje) => electron_1.ipcRenderer.invoke('show-confirm', mensaje),
+    cerrarVentana: () => electron_1.ipcRenderer.send('cerrar-ventana-crear'),
+    leerTurnosMes: (mes, anio) => electron_1.ipcRenderer.invoke('leer-turnos-mes', mes, anio)
 });

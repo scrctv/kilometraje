@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Crear</title>
+  <link rel="stylesheet" href="../estilos/crear.css">
+</head>
+<body>
+  <div class="crear-main-container">
+    <div class="crear-left-container">
+      <h2 style="text-align:center;margin:18px 0 10px 0;font-size:1.2em;">Turnos seleccionados</h2>
+      <ul id="turnos-listado" class="turnos-listado"></ul>
+    </div>
+    <div class="crear-right-container">
+      <div class="mes-selector">
+        <button id="mes-prev">&#8592;</button>
+        <span id="mes-actual"></span>
+        <button id="mes-next">&#8594;</button>
+        <div style="flex:1"></div>
+        <button id="btn-guardar" class="btn-accion">Guardar</button>
+        <button id="btn-salir" class="btn-accion">Salir</button>
+      </div>
+      <div class="dias-mes" id="dias-mes">
+        <!-- Aquí se generarán los días dinámicamente -->
+      </div>
+    </div>
+  </div>
+  <script src="../js/crear.js"></script>
+</body>
+</html>

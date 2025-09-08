@@ -1,6 +1,8 @@
 document.getElementById('btn-crear')?.addEventListener('click', () => {
   // Lógica para abrir ventana de creación
-  alert('Crear nuevo archivo');
+  if (window.electronAPI?.openCrearWindow) {
+    window.electronAPI.openCrearWindow();
+  }
 });
 
 document.getElementById('btn-configuracion')?.addEventListener('click', () => {
