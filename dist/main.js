@@ -159,9 +159,8 @@ electron_1.ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuari
         const zip = new PizZip(content);
         const doc = new Docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
         const datos = { ...datosUsuario, ...datosPlantilla };
-        doc.setData(datos);
         try {
-            doc.render();
+            doc.render(datos);
         }
         catch (error) {
             return { ok: false, msg: 'Error al procesar la plantilla: ' + (error && error.message ? error.message : String(error)) };
