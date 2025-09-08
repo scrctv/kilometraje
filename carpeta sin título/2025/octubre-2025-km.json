@@ -1,0 +1,38 @@
+[
+  {
+    "fecha": "2025-09-30",
+    "turno": "mañana"
+  },
+  {
+    "fecha": "2025-10-05",
+    "turno": "mañana"
+  },
+  {
+    "fecha": "2025-10-07",
+    "turno": "mañana"
+  },
+  {
+    "fecha": "2025-10-12",
+    "turno": "mañana"
+  },
+  {
+    "fecha": "2025-10-13",
+    "turno": "mañana"
+  },
+  {
+    "fecha": "2025-10-14",
+    "turno": "mañana"
+  },
+  {
+    "fecha": "2025-10-15",
+    "turno": "mañana"
+  },
+  {
+    "fecha": "2025-10-19",
+    "turno": "noche"
+  },
+  {
+    "fecha": "2025-10-20",
+    "turno": "tarde"
+  }
+]

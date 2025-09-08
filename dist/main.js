@@ -78,21 +78,16 @@ electron_1.ipcMain.handle('guardar-turnos', async (event, data, mes, anio) => {
         let archivoFinal = path.join(carpetaAnio, nombreBase);
         let variante = 1;
         while (fs.existsSync(archivoFinal)) {
-            // Preguntar si sobrescribir o crear variante
+            // Preguntar solo si sobrescribir o cancelar
             const { response } = await electron_1.dialog.showMessageBox({
                 type: 'question',
-                buttons: ['Sobrescribir', 'Crear variante', 'Cancelar'],
+                buttons: ['Sobrescribir', 'Cancelar'],
                 defaultId: 0,
-                cancelId: 2,
-                message: `El archivo ${nombreBase} ya existe. ¿Qué desea hacer?`
+                cancelId: 1,
+                message: `El archivo ${nombreBase} ya existe. ¿Desea sobrescribirlo?`
             });
             if (response === 0)
                 break; // Sobrescribir
-            if (response === 1) {
-                nombreBase = `${mesNombre}-${anio}-km(${variante}).json`;
-                archivoFinal = path.join(carpetaAnio, nombreBase);
-                variante++;
-            }
             else {
                 return { ok: false, msg: 'Cancelado por el usuario.' };
             }

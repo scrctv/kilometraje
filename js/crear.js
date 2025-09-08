@@ -130,11 +130,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function renderListado() {
+    // Eliminar mensaje de "no hay datos" si existe y hay algún apunte
+    const msg = document.getElementById('turnos-listado-msg');
+    // Ordenar por fecha
     const multicol = document.getElementById('turnos-listado-multicol');
     if (!multicol) return;
     const cols = multicol.querySelectorAll('ul.turnos-listado');
     cols.forEach(col => col.innerHTML = '');
-    // Ordenar por fecha
     const apuntes = [];
     const fechas = Object.keys(selecciones).sort();
     fechas.forEach(fechaKey => {
@@ -148,6 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       });
     });
+    if (apuntes.length > 0 && msg) msg.remove();
     // Repartir en columnas
     for (let i = 0; i < apuntes.length; i++) {
       const colIdx = Math.floor(i / 12);
