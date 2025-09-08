@@ -167,7 +167,17 @@ electron_1.ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuari
         }
         const buf = doc.getZip().generate({ type: 'nodebuffer' });
         const carpeta = path.dirname(rutaTurnos);
-        const nombre = 'resultado-' + Date.now() + '.docx';
+        // Obtener año y mes para el nombre del archivo
+        let nombreMes = '';
+        if (Array.isArray(meses) && meses.length > 0) {
+            const NOMBRES_MESES = [
+                'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+                'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+            ];
+            const mesNum = meses[0];
+            nombreMes = NOMBRES_MESES[mesNum - 1] || '';
+        }
+        const nombre = anio && nombreMes ? `${anio}-${nombreMes}.docx` : 'resultado-' + Date.now() + '.docx';
         const rutaSalida = path.join(carpeta, nombre);
         fs.writeFileSync(rutaSalida, buf);
         return { ok: true, nombre: rutaSalida };

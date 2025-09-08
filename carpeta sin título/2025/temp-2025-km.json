@@ -1,10 +1,58 @@
 [
   {
-    "fecha": "01-08-2025",
+    "fecha": "01-09-2025",
     "turno": "mañana"
   },
   {
-    "fecha": "31-08-2025",
+    "fecha": "02-09-2025",
+    "turno": "mañana"
+  },
+  {
+    "fecha": "03-09-2025",
+    "turno": "mañana"
+  },
+  {
+    "fecha": "04-09-2025",
+    "turno": "noche"
+  },
+  {
+    "fecha": "05-09-2025",
+    "turno": "noche"
+  },
+  {
+    "fecha": "06-09-2025",
+    "turno": "noche"
+  },
+  {
+    "fecha": "13-09-2025",
+    "turno": "tarde"
+  },
+  {
+    "fecha": "14-09-2025",
+    "turno": "tarde"
+  },
+  {
+    "fecha": "15-09-2025",
+    "turno": "mañana"
+  },
+  {
+    "fecha": "16-09-2025",
+    "turno": "mañana"
+  },
+  {
+    "fecha": "17-09-2025",
+    "turno": "noche"
+  },
+  {
+    "fecha": "18-09-2025",
+    "turno": "noche"
+  },
+  {
+    "fecha": "29-09-2025",
+    "turno": "noche"
+  },
+  {
+    "fecha": "30-09-2025",
     "turno": "noche"
   }
 ]

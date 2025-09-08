@@ -37,9 +37,14 @@ document.addEventListener('DOMContentLoaded', () => {
       checkbox.checked = mesesSeleccionados.includes(i + 1);
       checkbox.addEventListener('change', (e) => {
         if (e.target.checked) {
-          mesesSeleccionados.push(i + 1);
+          // Solo permitir un mes seleccionado a la vez
+          mesesSeleccionados = [i + 1];
+          // Desmarcar los otros checkboxes
+          document.querySelectorAll('.generar-mes-item input[type="checkbox"]').forEach((cb, idx) => {
+            if (idx !== i) cb.checked = false;
+          });
         } else {
-          mesesSeleccionados = mesesSeleccionados.filter(m => m !== (i + 1));
+          mesesSeleccionados = [];
         }
       });
       const label = document.createElement('label');
@@ -155,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       
       if (todosLosTurnos.length === 0) {
-        mensaje.textContent = 'No hay datos CREADO un arcchivo para los meses seleccionados.';
+        mensaje.textContent = 'No hay CREADO un arcchivo para el mes seleccionado.';
         return;
       }
 
