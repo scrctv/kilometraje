@@ -6,10 +6,17 @@
   <link rel="stylesheet" href="../estilos/crear.css">
 </head>
 <body>
-  <div class="crear-main-container">
+  <div class="crear-main-container" style="height:637px;">
     <div class="crear-left-container">
       <h2 style="text-align:center;margin:18px 0 10px 0;font-size:1.2em;">Turnos seleccionados</h2>
-      <ul id="turnos-listado" class="turnos-listado"></ul>
+      <div id="turnos-listado-multicol" class="turnos-listado-multicol">
+        <ul class="turnos-listado"></ul>
+        <ul class="turnos-listado"></ul>
+        <ul class="turnos-listado"></ul>
+      </div>
+      <div id="resumen-km" class="resumen-km-container">
+        <!-- Aquí irá el resumen de días y euros -->
+      </div>
     </div>
     <div class="crear-right-container">
       <div class="mes-selector">

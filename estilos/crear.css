@@ -24,7 +24,7 @@ body {
 
 .crear-main-container {
   width: 1470px;
-  height: 956px;
+  height: 637px;
   display: flex;
   box-sizing: border-box;
   background: #fff;
@@ -33,12 +33,34 @@ body {
   box-shadow: 0 2px 16px rgba(0,0,0,0.08);
 }
 
-.crear-left-container {
-  width: 50%;
-  height: 100%;
-  background: #e9ecef;
-  border-right: 2px solid #d1d5db;
-  box-sizing: border-box;
+  .crear-left-container {
+    width: 50%;
+    height: 100%;
+    background: #e9ecef;
+    border-right: 2px solid #d1d5db;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    position: relative;
+  }
+
+.resumen-km-container {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 120px;
+  background: #dbeafe;
+  border-top: 2px solid #b6c6e3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 32px;
+  font-size: 1.25em;
+  font-weight: 500;
+  color: #1e293b;
+  letter-spacing: 0.5px;
 }
 
 .crear-right-container {
@@ -143,19 +165,30 @@ body {
 .dia-content-cell:last-child {
   border-right: none;
 }
+.turnos-listado-multicol {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  min-height: 180px;
+  margin-bottom: 8px;
+}
 .turnos-listado {
   list-style: none;
-  padding: 0 12px;
+  padding: 0 8px;
   margin: 0;
   font-size: 1em;
   color: #222;
-  max-height: 90vh;
-  overflow-y: auto;
+  min-width: 120px;
+  max-width: 180px;
 }
 .turnos-listado li {
   padding: 4px 0;
   border-bottom: 1px solid #e0e0e0;
   font-size: 0.98em;
+  word-break: break-word;
 }
 .dia-header {
   background: #1976d2;

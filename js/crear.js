@@ -104,10 +104,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  async function renderResumenKM() {
+    // Contar días únicos trabajados
+    const diasUnicos = new Set();
+    Object.keys(selecciones).forEach(fechaKey => {
+      if (Object.values(selecciones[fechaKey]).some(v => v)) {
+        diasUnicos.add(fechaKey);
+      }
+    });
+    const diasTrabajados = diasUnicos.size;
+    // Leer unidad por km
+    let euros = 0;
+    if (window.electronAPI.getUnidadPorKm) {
+      const valor = await window.electronAPI.getUnidadPorKm();
+      euros = Number(valor) * diasTrabajados;
+    }
+    const resumenDiv = document.getElementById('resumen-km');
+    resumenDiv.innerHTML = `<span>Días trabajados: <b>${diasTrabajados}</b></span> <span>EUROS: <b>${euros.toFixed(2)}</b></span>`;
+  }
+
   function renderListado() {
-    const listado = document.getElementById('turnos-listado');
-    listado.innerHTML = '';
+    const multicol = document.getElementById('turnos-listado-multicol');
+    if (!multicol) return;
+    const cols = multicol.querySelectorAll('ul.turnos-listado');
+    cols.forEach(col => col.innerHTML = '');
     // Ordenar por fecha
+    const apuntes = [];
     const fechas = Object.keys(selecciones).sort();
     fechas.forEach(fechaKey => {
       turnos.forEach(turno => {
@@ -116,12 +138,20 @@ document.addEventListener('DOMContentLoaded', () => {
           const dia = fechaObj.getDate();
           const mesNombre = meses[fechaObj.getMonth()];
           const texto = `${dia} ${mesNombre} (${turno})`;
-          const li = document.createElement('li');
-          li.textContent = texto;
-          listado.appendChild(li);
+          apuntes.push(texto);
         }
       });
     });
+    // Repartir en columnas
+    for (let i = 0; i < apuntes.length; i++) {
+      const colIdx = Math.floor(i / 12);
+      if (colIdx < cols.length) {
+        const li = document.createElement('li');
+        li.textContent = apuntes[i];
+        cols[colIdx].appendChild(li);
+      }
+    }
+    renderResumenKM();
   }
 
   btnPrev.addEventListener('click', () => {
