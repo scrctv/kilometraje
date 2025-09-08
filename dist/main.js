@@ -42,6 +42,32 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs = __importStar(require("fs"));
 const electron_1 = require("electron");
 const path = __importStar(require("path"));
+// Guardar y recuperar la última ruta de datosusuario.json
+electron_1.ipcMain.handle('save-ruta-datosusuario', async (event, ruta) => {
+    try {
+        const configDir = path.join(electron_1.app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+        if (!fs.existsSync(configDir))
+            fs.mkdirSync(configDir, { recursive: true });
+        const rutaFile = path.join(configDir, 'ruta-datosusuario.json');
+        fs.writeFileSync(rutaFile, JSON.stringify({ ruta }, null, 2), 'utf-8');
+        return true;
+    }
+    catch (e) {
+        return false;
+    }
+});
+electron_1.ipcMain.handle('get-ruta-datosusuario', async () => {
+    try {
+        const configDir = path.join(electron_1.app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+        const rutaFile = path.join(configDir, 'ruta-datosusuario.json');
+        if (!fs.existsSync(rutaFile))
+            return null;
+        return JSON.parse(fs.readFileSync(rutaFile, 'utf-8')).ruta;
+    }
+    catch (e) {
+        return null;
+    }
+});
 // Guardar turnos.json
 electron_1.ipcMain.handle('save-turnos', async (event, turnos) => {
     try {

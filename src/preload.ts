@@ -1,4 +1,3 @@
-
 import { contextBridge, ipcRenderer } from 'electron';
 
 contextBridge.exposeInMainWorld('electronAPI', {
@@ -25,5 +24,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
   leerTurnosMes: (mes: string, anio: number) => ipcRenderer.invoke('leer-turnos-mes', mes, anio),
   generarDocx: (params: any) => ipcRenderer.invoke('generar-docx', params),
   saveTurnos: (turnos: any) => ipcRenderer.invoke('save-turnos', turnos),
-  getTurnos: () => ipcRenderer.invoke('get-turnos')
+  getTurnos: () => ipcRenderer.invoke('get-turnos'),
+  saveRutaDatosUsuario: (ruta: string) => ipcRenderer.invoke('save-ruta-datosusuario', ruta),
+  getRutaDatosUsuario: () => ipcRenderer.invoke('get-ruta-datosusuario')
 });

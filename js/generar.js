@@ -27,6 +27,10 @@ document.addEventListener('DOMContentLoaded', () => {
       ]);
       if (filePath) {
         inputUsuario.value = filePath;
+        // Guardar la ruta seleccionada
+        if (window.electronAPI?.saveRutaDatosUsuario) {
+          await window.electronAPI.saveRutaDatosUsuario(filePath);
+        }
       }
     }
   });
@@ -57,6 +61,14 @@ document.addEventListener('DOMContentLoaded', () => {
   btnCerrar.addEventListener('click', () => {
     window.electronAPI.cerrarVentanaGenerar?.();
   });
+  // Al cargar, intentar recuperar la última ruta de datosusuario.json
+  (async () => {
+    if (window.electronAPI?.getRutaDatosUsuario) {
+      const ruta = await window.electronAPI.getRutaDatosUsuario();
+      if (ruta) inputUsuario.value = ruta;
+    }
+  })();
+
   // Enviar formulario para generar DOCX
   form.addEventListener('submit', async (e) => {
     e.preventDefault();

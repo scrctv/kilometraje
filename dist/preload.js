@@ -25,5 +25,7 @@ electron_1.contextBridge.exposeInMainWorld('electronAPI', {
     leerTurnosMes: (mes, anio) => electron_1.ipcRenderer.invoke('leer-turnos-mes', mes, anio),
     generarDocx: (params) => electron_1.ipcRenderer.invoke('generar-docx', params),
     saveTurnos: (turnos) => electron_1.ipcRenderer.invoke('save-turnos', turnos),
-    getTurnos: () => electron_1.ipcRenderer.invoke('get-turnos')
+    getTurnos: () => electron_1.ipcRenderer.invoke('get-turnos'),
+    saveRutaDatosUsuario: (ruta) => electron_1.ipcRenderer.invoke('save-ruta-datosusuario', ruta),
+    getRutaDatosUsuario: () => electron_1.ipcRenderer.invoke('get-ruta-datosusuario')
 });
