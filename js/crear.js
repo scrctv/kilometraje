@@ -63,8 +63,13 @@ document.addEventListener('DOMContentLoaded', () => {
       semana.appendChild(empty);
     }
     for (let d = 1; d <= diasEnMes; d++) {
+      // Crear fecha directamente en formato DD-MM-AAAA
+      const yyyy = anio;
+      const mm = String(mes + 1).padStart(2, '0');
+      const dd = String(d).padStart(2, '0');
+      const fechaKey = `${dd}-${mm}-${yyyy}`;
+      // Crear Date solo para obtener el día de la semana
       const fecha = new Date(anio, mes, d);
-      const fechaKey = fecha.toISOString().slice(0, 10);
       let diaCont = document.createElement('div');
       diaCont.className = 'dia-container';
       const diaSemanaNombre = fecha.toLocaleDateString('es-ES', { weekday: 'short' });
@@ -142,9 +147,9 @@ document.addEventListener('DOMContentLoaded', () => {
     fechas.forEach(fechaKey => {
       turnos.forEach(turno => {
         if (selecciones[fechaKey][turno]) {
-          const fechaObj = new Date(fechaKey);
-          const dia = fechaObj.getDate();
-          const mesNombre = meses[fechaObj.getMonth()];
+          // Parsear fecha en formato DD-MM-YYYY
+          const [dia, mesNum, anio] = fechaKey.split('-');
+          const mesNombre = meses[parseInt(mesNum) - 1];
           const texto = `${dia} ${mesNombre} (${turno})`;
           apuntes.push(texto);
         }
@@ -188,11 +193,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const datos = [];
     const fechas = Object.keys(selecciones).sort();
     fechas.forEach(fechaKey => {
-      turnos.forEach(turno => {
-        if (selecciones[fechaKey][turno]) {
-          datos.push({ fecha: fechaKey, turno });
-        }
-      });
+      // Solo guardar si hay algún turno seleccionado para esa fecha
+      if (Object.values(selecciones[fechaKey]).some(v => v)) {
+        turnos.forEach(turno => {
+          if (selecciones[fechaKey][turno]) {
+            datos.push({ fecha: fechaKey, turno });
+          }
+        });
+      }
     });
     if (datos.length === 0) {
       alert('No hay turnos seleccionados para guardar.');

@@ -39,16 +39,60 @@ ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuario, rutaPlan
   try {
     // Cargar datos de usuario y turnos
     const datosUsuario = JSON.parse(fs.readFileSync(rutaUsuario, 'utf-8'));
-    const datosTurnos = JSON.parse(fs.readFileSync(rutaTurnos, 'utf-8'));
-  // Leer plantilla DOTX/DOCX como Buffer (sin encoding)
-  const content = fs.readFileSync(rutaPlantilla);
+    const apuntes = JSON.parse(fs.readFileSync(rutaTurnos, 'utf-8'));
+    // Leer horarios de turnos
+    const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+    const turnosPath = path.join(configDir, 'turnos.json');
+    const turnos = fs.existsSync(turnosPath) ? JSON.parse(fs.readFileSync(turnosPath, 'utf-8')) : {};
+    // Preparar campos para la plantilla (máximo 18 filas)
+    const datosPlantilla: any = {};
+    const maxFilas = 18;
+    for (let i = 0; i < maxFilas; i++) {
+      if (i < apuntes.length) {
+        const apunte = apuntes[i];
+        // apunte.fecha ya está en formato dd-mm-aaaa
+        const [dia, mesStr, anioStr] = apunte.fecha.split('-');
+        const fechaI = `${dia}-${mesStr}-${anioStr}`;
+        let fechaF = fechaI;
+        let horaI = '';
+        let horaF = '';
+        // Normalizar turno para aceptar tanto "mañana" como "manana"
+        const turnoNormalizado = apunte.turno.replace('ñ', 'n');
+        if (turnoNormalizado === 'manana' || apunte.turno === 'tarde') {
+          const tipoTurno = turnoNormalizado === 'manana' ? 'manana' : 'tarde';
+          horaI = turnos[tipoTurno]?.inicio || turnos['mañana']?.inicio || '';
+          horaF = turnos[tipoTurno]?.fin || turnos['mañana']?.fin || '';
+        } else if (apunte.turno === 'noche') {
+          horaI = turnos.noche?.inicio || '';
+          horaF = turnos.noche?.fin || '';
+          // Calcular fecha final (día siguiente)
+          const d = new Date(`${anioStr}-${mesStr}-${dia}`);
+          d.setDate(d.getDate() + 1);
+          const ddF = String(d.getDate()).padStart(2, '0');
+          const mmF = String(d.getMonth() + 1).padStart(2, '0');
+          const yyyyF = d.getFullYear();
+          fechaF = `${ddF}-${mmF}-${yyyyF}`;
+        }
+        datosPlantilla[`DIA${i+1}I`] = fechaI;
+        datosPlantilla[`DIA${i+1}F`] = fechaF;
+        datosPlantilla[`HID${i+1}`] = horaI;
+        datosPlantilla[`HFD${i+1}`] = horaF;
+      } else {
+        datosPlantilla[`DIA${i+1}I`] = '';
+        datosPlantilla[`DIA${i+1}F`] = '';
+        datosPlantilla[`HID${i+1}`] = '';
+        datosPlantilla[`HFD${i+1}`] = '';
+      }
+    }
+    // Leer plantilla DOTX/DOCX como Buffer (sin encoding)
+    const content = fs.readFileSync(rutaPlantilla);
     // Cargar docxtemplater y pizzip
     const PizZip = require('pizzip');
     const Docxtemplater = require('docxtemplater');
     const zip = new PizZip(content);
     const doc = new Docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
     // Unir datos
-    const datos = { ...datosUsuario, ...datosTurnos };
+    const datos = { ...datosUsuario, ...datosPlantilla };
     doc.setData(datos);
     try {
       doc.render();

@@ -1,5 +1,16 @@
 // Cargar datos guardados al abrir el formulario
 document.addEventListener('DOMContentLoaded', async function() {
+  // Inicializar todos los checks deseleccionados por defecto
+  [
+    'comissio', 'curs', 'trasllat', 'sessions', 'altres',
+    'vehicleoficial', 'avio', 'tren', 'vehicleparticular', 'altre'
+  ].forEach(id => {
+    document.getElementById(id).checked = false;
+  });
+  // Inicializar radios pagament deseleccionados
+  document.getElementById('pagament_si').checked = false;
+  document.getElementById('pagament_no').checked = false;
+
   if (window.electronAPI?.getDatosUsuario) {
     const datos = await window.electronAPI.getDatosUsuario();
     if (datos) {
@@ -11,25 +22,25 @@ document.addEventListener('DOMContentLoaded', async function() {
       document.getElementById('departament').value = datos.departament || '';
       document.getElementById('conselleria').value = datos.conselleria || '';
       // Checks B
-      document.getElementById('comissio').checked = !!datos.comissio;
-      document.getElementById('curs').checked = !!datos.curs;
-      document.getElementById('trasllat').checked = !!datos.trasllat;
-      document.getElementById('sessions').checked = !!datos.sessions;
-      document.getElementById('altres').checked = !!datos.altres;
+      document.getElementById('comissio').checked = datos.comissio === '☒';
+      document.getElementById('curs').checked = datos.curs === '☒';
+      document.getElementById('trasllat').checked = datos.trasllat === '☒';
+      document.getElementById('sessions').checked = datos.sessions === '☒';
+      document.getElementById('altres').checked = datos.altres === '☒';
       document.getElementById('detall').value = datos.detall || '';
       // Checks C
-      document.getElementById('vehicleoficial').checked = !!datos.vehicleoficial;
-      document.getElementById('avio').checked = !!datos.avio;
-      document.getElementById('tren').checked = !!datos.tren;
-      document.getElementById('vehicleparticular').checked = !!datos.vehicleparticular;
-      document.getElementById('altre').checked = !!datos.altre;
+      document.getElementById('vehicleoficial').checked = datos.vehicleoficial === '☒';
+      document.getElementById('avio').checked = datos.avio === '☒';
+      document.getElementById('tren').checked = datos.tren === '☒';
+      document.getElementById('vehicleparticular').checked = datos.vehicleparticular === '☒';
+      document.getElementById('altre').checked = datos.altre === '☒';
       document.getElementById('otro').value = datos.otro || '';
       document.getElementById('marca').value = datos.marca || '';
       document.getElementById('matricula').value = datos.matricula || '';
       document.getElementById('peatge').value = datos.peatge || '';
       // Radios
-      if (datos.pagament === 'si') document.getElementById('pagament_si').checked = true;
-      if (datos.pagament === 'no') document.getElementById('pagament_no').checked = true;
+      document.getElementById('pagament_si').checked = datos.pagament_si === '☒';
+      document.getElementById('pagament_no').checked = datos.pagament_no === '☒';
       // Cargos
       document.getElementById('cargo1').value = datos.cargo1 || '';
       document.getElementById('nifcargo1').value = datos.nifcargo1 || '';
@@ -37,6 +48,8 @@ document.addEventListener('DOMContentLoaded', async function() {
       document.getElementById('cargo2').value = datos.cargo2 || '';
       document.getElementById('nifcargo2').value = datos.nifcargo2 || '';
       document.getElementById('nombrecargo2').value = datos.nombrecargo2 || '';
+      document.getElementById('mitja').value = datos.mitja || '';
+      document.getElementById('km').value = datos.km || '';
     }
   }
 });
@@ -149,7 +162,9 @@ document.getElementById('form-usuario')?.addEventListener('submit', async functi
   cargo2: document.getElementById('cargo2').value,
   nifcargo2: document.getElementById('nifcargo2').value,
   nombrecargo2: document.getElementById('nombrecargo2').value,
-  itinerario: document.getElementById('itinerario').value
+  itinerario: document.getElementById('itinerario').value,
+  mitja: document.getElementById('mitja').value,
+  km: document.getElementById('km').value
   };
   if (window.electronAPI?.saveDatosUsuario) {
     await window.electronAPI.saveDatosUsuario(data);
