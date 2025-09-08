@@ -96,11 +96,19 @@ electron_1.ipcMain.handle('get-turnos', async () => {
     }
 });
 // Handler para generar DOCX usando docxtemplater
-electron_1.ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuario, rutaPlantilla }) => {
+// Eliminado handler duplicado de 'generar-docx' (solo debe haber uno)
+electron_1.ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuario, rutaPlantilla, anio, meses }) => {
     try {
         // Cargar datos de usuario y turnos
         const datosUsuario = JSON.parse(fs.readFileSync(rutaUsuario, 'utf-8'));
-        const apuntes = JSON.parse(fs.readFileSync(rutaTurnos, 'utf-8'));
+        let apuntes = JSON.parse(fs.readFileSync(rutaTurnos, 'utf-8'));
+        // Filtrar por año y meses si se reciben
+        if (anio && Array.isArray(meses) && meses.length > 0) {
+            apuntes = apuntes.filter((apunte) => {
+                const [dia, mes, anioStr] = apunte.fecha.split('-');
+                return parseInt(anioStr) === anio && meses.includes(parseInt(mes));
+            });
+        }
         // Leer horarios de turnos
         const configDir = path.join(electron_1.app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
         const turnosPath = path.join(configDir, 'turnos.json');
@@ -111,13 +119,11 @@ electron_1.ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuari
         for (let i = 0; i < maxFilas; i++) {
             if (i < apuntes.length) {
                 const apunte = apuntes[i];
-                // apunte.fecha ya está en formato dd-mm-aaaa
                 const [dia, mesStr, anioStr] = apunte.fecha.split('-');
                 const fechaI = `${dia}-${mesStr}-${anioStr}`;
                 let fechaF = fechaI;
                 let horaI = '';
                 let horaF = '';
-                // Normalizar turno para aceptar tanto "mañana" como "manana"
                 const turnoNormalizado = apunte.turno.replace('ñ', 'n');
                 if (turnoNormalizado === 'manana' || apunte.turno === 'tarde') {
                     const tipoTurno = turnoNormalizado === 'manana' ? 'manana' : 'tarde';
@@ -127,7 +133,6 @@ electron_1.ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuari
                 else if (apunte.turno === 'noche') {
                     horaI = turnos.noche?.inicio || '';
                     horaF = turnos.noche?.fin || '';
-                    // Calcular fecha final (día siguiente)
                     const d = new Date(`${anioStr}-${mesStr}-${dia}`);
                     d.setDate(d.getDate() + 1);
                     const ddF = String(d.getDate()).padStart(2, '0');
@@ -149,22 +154,19 @@ electron_1.ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuari
         }
         // Leer plantilla DOTX/DOCX como Buffer (sin encoding)
         const content = fs.readFileSync(rutaPlantilla);
-        // Cargar docxtemplater y pizzip
         const PizZip = require('pizzip');
         const Docxtemplater = require('docxtemplater');
         const zip = new PizZip(content);
         const doc = new Docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
-        // Unir datos
         const datos = { ...datosUsuario, ...datosPlantilla };
         doc.setData(datos);
         try {
             doc.render();
         }
         catch (error) {
-            return { ok: false, msg: 'Error al procesar la plantilla: ' + (error?.message || error) };
+            return { ok: false, msg: 'Error al procesar la plantilla: ' + (error && error.message ? error.message : String(error)) };
         }
         const buf = doc.getZip().generate({ type: 'nodebuffer' });
-        // Guardar en la misma carpeta que el JSON de turnos
         const carpeta = path.dirname(rutaTurnos);
         const nombre = 'resultado-' + Date.now() + '.docx';
         const rutaSalida = path.join(carpeta, nombre);
@@ -172,7 +174,7 @@ electron_1.ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuari
         return { ok: true, nombre: rutaSalida };
     }
     catch (err) {
-        return { ok: false, msg: err?.message || err };
+        return { ok: false, msg: err && err.message ? err.message : String(err) };
     }
 });
 // Handler para seleccionar archivo con filtro personalizado
@@ -207,8 +209,23 @@ electron_1.ipcMain.on('cerrar-ventana-generar', () => {
 // Handler para abrir ubicación de archivo en Finder/Explorer
 electron_1.ipcMain.handle('abrir-en-finder', async (event, filePath) => {
     const { shell } = require('electron');
-    if (filePath)
-        shell.showItemInFolder(filePath);
+    const fs = require('fs');
+    if (filePath) {
+        try {
+            if (fs.existsSync(filePath) && fs.lstatSync(filePath).isDirectory()) {
+                // Es una carpeta, abrirla directamente
+                shell.openPath(filePath);
+            }
+            else {
+                // Es un archivo, mostrarlo en su carpeta
+                shell.showItemInFolder(filePath);
+            }
+        }
+        catch (e) {
+            // fallback
+            shell.showItemInFolder(filePath);
+        }
+    }
 });
 // Leer archivo de turnos para un mes y año
 electron_1.ipcMain.handle('leer-turnos-mes', async (event, mes, anio) => {
@@ -222,15 +239,19 @@ electron_1.ipcMain.handle('leer-turnos-mes', async (event, mes, anio) => {
             return { ok: false, msg: 'Ruta de destino no válida.' };
         const mesNombre = mes.toLowerCase();
         const carpetaAnio = path.join(rutaDestino, anio.toString());
-        const nombreBase = `${mesNombre}-${anio}-km.json`;
-        const archivoFinal = path.join(carpetaAnio, nombreBase);
-        if (!fs.existsSync(archivoFinal))
+        if (!fs.existsSync(carpetaAnio))
+            return { ok: false, msg: 'No existe la carpeta del año.' };
+        // Buscar cualquier archivo que contenga el nombre del mes y termine en .json
+        const archivos = fs.readdirSync(carpetaAnio).filter(f => f.toLowerCase().includes(mesNombre) && f.endsWith('.json'));
+        if (archivos.length === 0)
             return { ok: false, msg: 'No hay datos para este mes.' };
+        // Tomar el primero que coincida
+        const archivoFinal = path.join(carpetaAnio, archivos[0]);
         const datos = JSON.parse(fs.readFileSync(archivoFinal, 'utf-8'));
         return { ok: true, datos };
     }
     catch (e) {
-        return { ok: false, msg: 'Error al leer: ' + e.message };
+        return { ok: false, msg: 'Error al leer: ' + (e.message || e) };
     }
 });
 // Guardar turnos seleccionados como JSON
@@ -249,24 +270,8 @@ electron_1.ipcMain.handle('guardar-turnos', async (event, data, mes, anio) => {
             fs.mkdirSync(carpetaAnio, { recursive: true });
         let nombreBase = `${mesNombre}-${anio}-km.json`;
         let archivoFinal = path.join(carpetaAnio, nombreBase);
-        let variante = 1;
-        while (fs.existsSync(archivoFinal)) {
-            // Preguntar solo si sobrescribir o cancelar
-            const { response } = await electron_1.dialog.showMessageBox({
-                type: 'question',
-                buttons: ['Sobrescribir', 'Cancelar'],
-                defaultId: 0,
-                cancelId: 1,
-                message: `El archivo ${nombreBase} ya existe. ¿Desea sobrescribirlo?`
-            });
-            if (response === 0)
-                break; // Sobrescribir
-            else {
-                return { ok: false, msg: 'Cancelado por el usuario.' };
-            }
-        }
         fs.writeFileSync(archivoFinal, JSON.stringify(data, null, 2), 'utf-8');
-        return { ok: true, msg: `Guardado en ${archivoFinal}` };
+        return { ok: true, msg: `Guardado en ${archivoFinal}`, ruta: archivoFinal };
     }
     catch (e) {
         return { ok: false, msg: 'Error al guardar: ' + e.message };

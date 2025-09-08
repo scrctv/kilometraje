@@ -6,31 +6,43 @@
   <link rel="stylesheet" href="../estilos/generar.css">
 </head>
 <body>
-  <div class="generar-main-container">
-    <h2>Generar documento DOCX</h2>
-    <form id="form-generar-docx">
-      <div class="campo">
-        <label>Archivo de turnos (mes):</label>
-        <input type="text" id="input-turnos" readonly>
-        <button type="button" id="btn-turnos">Seleccionar archivo</button>
-      </div>
-      <div class="campo">
-        <label>Datos de usuario:</label>
-        <input type="text" id="input-usuario" readonly>
-        <button type="button" id="btn-usuario">Seleccionar archivo</button>
-      </div>
-      <div class="campo">
+  <div class="generar-main-flex">
+    <!-- Columna izquierda -->
+    <div class="generar-col-izq">
+      <!-- Contenedor: Selección de archivos -->
+      <div class="generar-form-rutas">
+        <label>Datos de usuario (JSON):</label>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="input-usuario" readonly>
+          <button type="button" id="btn-usuario">Seleccionar</button>
+        </div>
         <label>Plantilla DOCX:</label>
-        <input type="text" id="input-plantilla" readonly>
-        <button type="button" id="btn-plantilla-seleccionar">Seleccionar plantilla</button>
-        <button type="button" id="btn-plantilla">Ver plantilla</button>
+        <div style="display:flex; gap:8px;">
+          <input type="text" id="input-plantilla" readonly>
+          <button type="button" id="btn-plantilla-seleccionar">Seleccionar</button>
+          <button type="button" id="btn-plantilla">Ver</button>
+        </div>
       </div>
-      <div class="acciones">
-        <button type="submit" id="btn-generar">Generar DOCX</button>
+      <!-- Contenedor: Botones principales -->
+      <div class="generar-botones">
+        <button type="button" id="btn-generar">Generar DOCX</button>
+        <button type="button" id="btn-abrir-carpeta">Abrir carpeta destino</button>
         <button type="button" id="btn-cerrar">Cerrar</button>
       </div>
-    </form>
-    <div id="mensaje-resultado" class="mensaje-resultado"></div>
+      <div id="mensaje-resultado" class="mensaje-resultado"></div>
+    </div>
+    <!-- Columna derecha -->
+    <div class="generar-col-der">
+      <h3>Selecciona año y meses a generar</h3>
+      <div class="generar-selector-anio">
+        <button type="button" id="btn-anio-prev">&#8592;</button>
+        <span id="anio-actual">2025</span>
+        <button type="button" id="btn-anio-next">&#8594;</button>
+      </div>
+      <div class="generar-lista-meses" id="lista-meses">
+        <!-- Aquí se insertan los checkboxes de meses dinámicamente -->
+      </div>
+    </div>
   </div>
   <script src="../js/generar.js"></script>
 </body>
