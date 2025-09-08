@@ -1,7 +1,107 @@
-// ¡IMPORTANTE! Todos los imports deben ir al principio del archivo para evitar errores de inicialización de Electron.
+
+// ¡¡¡NO TOCAR!!!
+// TODOS LOS IMPORTS DEBEN IR AL PRINCIPIO DE ESTE ARCHIVO.
+// NO PONGAS NINGÚN CÓDIGO, HANDLER NI COMENTARIO ANTES DE LOS IMPORTS.
+// SI VES 'Cannot access ... before initialization', ES PORQUE HAY ALGO ANTES DE LOS IMPORTS.
+//
+// ⚠️ SCRCTV: ¡REVISA SIEMPRE ESTO ANTES DE GUARDAR! ⚠️
 import * as fs from 'fs';
 import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import * as path from 'path';
+
+// Guardar turnos.json
+ipcMain.handle('save-turnos', async (event, turnos) => {
+  try {
+    const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+    if (!fs.existsSync(configDir)) fs.mkdirSync(configDir, { recursive: true });
+    const ruta = path.join(configDir, 'turnos.json');
+    fs.writeFileSync(ruta, JSON.stringify(turnos, null, 2), 'utf-8');
+    return true;
+  } catch (e) {
+    return false;
+  }
+});
+
+// Leer turnos.json
+ipcMain.handle('get-turnos', async () => {
+  try {
+    const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+    const ruta = path.join(configDir, 'turnos.json');
+    if (!fs.existsSync(ruta)) return null;
+    return JSON.parse(fs.readFileSync(ruta, 'utf-8'));
+  } catch (e) {
+    return null;
+  }
+});
+
+// Handler para generar DOCX usando docxtemplater
+ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuario, rutaPlantilla }) => {
+  try {
+    // Cargar datos de usuario y turnos
+    const datosUsuario = JSON.parse(fs.readFileSync(rutaUsuario, 'utf-8'));
+    const datosTurnos = JSON.parse(fs.readFileSync(rutaTurnos, 'utf-8'));
+  // Leer plantilla DOTX/DOCX como Buffer (sin encoding)
+  const content = fs.readFileSync(rutaPlantilla);
+    // Cargar docxtemplater y pizzip
+    const PizZip = require('pizzip');
+    const Docxtemplater = require('docxtemplater');
+    const zip = new PizZip(content);
+    const doc = new Docxtemplater(zip, { paragraphLoop: true, linebreaks: true });
+    // Unir datos
+    const datos = { ...datosUsuario, ...datosTurnos };
+    doc.setData(datos);
+    try {
+      doc.render();
+    } catch (error: any) {
+      return { ok: false, msg: 'Error al procesar la plantilla: ' + (error?.message || error) };
+    }
+    const buf = doc.getZip().generate({ type: 'nodebuffer' });
+    // Guardar en la misma carpeta que el JSON de turnos
+    const carpeta = path.dirname(rutaTurnos);
+    const nombre = 'resultado-' + Date.now() + '.docx';
+    const rutaSalida = path.join(carpeta, nombre);
+    fs.writeFileSync(rutaSalida, buf);
+    return { ok: true, nombre: rutaSalida };
+  } catch (err: any) {
+    return { ok: false, msg: err?.message || err };
+  }
+});
+
+// Handler para seleccionar archivo con filtro personalizado
+ipcMain.handle('dialog:openFileWithFilter', async (event, filters) => {
+  const { canceled, filePaths } = await dialog.showOpenDialog({
+    properties: ['openFile'],
+    filters: filters || []
+  });
+  if (canceled || filePaths.length === 0) return null;
+  return filePaths[0];
+});
+
+// Handler para abrir la ventana GENERAR DOCX
+ipcMain.on('open-generar-window', () => {
+  const genWin = new BrowserWindow({
+    width: 600,
+    height: 500,
+    webPreferences: {
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
+      nodeIntegration: false
+    }
+  });
+  genWin.loadFile(path.join(__dirname, '../html/generar.html'));
+});
+
+// Handler para cerrar la ventana GENERAR DOCX
+ipcMain.on('cerrar-ventana-generar', () => {
+  const win = BrowserWindow.getFocusedWindow();
+  if (win) win.close();
+});
+
+// Handler para abrir ubicación de archivo en Finder/Explorer
+ipcMain.handle('abrir-en-finder', async (event, filePath) => {
+  const { shell } = require('electron');
+  if (filePath) shell.showItemInFolder(filePath);
+});
 
 // Leer archivo de turnos para un mes y año
 ipcMain.handle('leer-turnos-mes', async (event, mes, anio) => {

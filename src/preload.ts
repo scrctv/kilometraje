@@ -1,3 +1,4 @@
+
 import { contextBridge, ipcRenderer } from 'electron';
 
 contextBridge.exposeInMainWorld('electronAPI', {
@@ -17,5 +18,12 @@ contextBridge.exposeInMainWorld('electronAPI', {
   guardarTurnos: (data: any, mes: string, anio: number) => ipcRenderer.invoke('guardar-turnos', data, mes, anio),
   showConfirm: (mensaje: string) => ipcRenderer.invoke('show-confirm', mensaje),
   cerrarVentana: () => ipcRenderer.send('cerrar-ventana-crear'),
-  leerTurnosMes: (mes: string, anio: number) => ipcRenderer.invoke('leer-turnos-mes', mes, anio)
+  openGenerarWindow: () => ipcRenderer.send('open-generar-window'),
+  cerrarVentanaGenerar: () => ipcRenderer.send('cerrar-ventana-generar'),
+  abrirEnFinder: (filePath: string) => ipcRenderer.invoke('abrir-en-finder', filePath),
+  openFileWithFilter: (filters: any) => ipcRenderer.invoke('dialog:openFileWithFilter', filters),
+  leerTurnosMes: (mes: string, anio: number) => ipcRenderer.invoke('leer-turnos-mes', mes, anio),
+  generarDocx: (params: any) => ipcRenderer.invoke('generar-docx', params),
+  saveTurnos: (turnos: any) => ipcRenderer.invoke('save-turnos', turnos),
+  getTurnos: () => ipcRenderer.invoke('get-turnos')
 });

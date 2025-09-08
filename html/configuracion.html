@@ -12,6 +12,7 @@
   <div class="tabs">
     <button class="tab-btn active" data-tab="guardado">Direcciónes de guardado</button>
     <button class="tab-btn" data-tab="kilometraje">Kilometraje</button>
+    <button class="tab-btn" data-tab="turnos">TURNOS</button>
   </div>
   <div class="tab-content" id="guardado">
     <h2>Direcciónes de guardado</h2>
@@ -38,6 +39,28 @@
       <small>Hasta 3 cifras y 3 decimales</small>
       <button id="btn-guardar-km">Guardar</button>
     </div>
+  </div>
+  <div class="tab-content hidden" id="turnos">
+    <h2>Turnos de trabajo</h2>
+    <form id="form-turnos">
+      <div class="seccion">
+        <label for="manana_inicio">TURNO DE MAÑANA</label>
+        <input type="time" id="manana_inicio" name="manana_inicio"> a
+        <input type="time" id="manana_fin" name="manana_fin">
+      </div>
+      <div class="seccion">
+        <label for="tarde_inicio">TURNO DE TARDE</label>
+        <input type="time" id="tarde_inicio" name="tarde_inicio"> a
+        <input type="time" id="tarde_fin" name="tarde_fin">
+      </div>
+      <div class="seccion">
+        <label for="noche_inicio">TURNO DE NOCHE</label>
+        <input type="time" id="noche_inicio" name="noche_inicio"> a
+        <input type="time" id="noche_fin" name="noche_fin">
+      </div>
+      <button type="submit">Guardar turnos</button>
+    </form>
+    <div id="mensaje-turnos" class="mensaje-resultado"></div>
   </div>
   <script src="../js/configuracion.js"></script>
 </body>

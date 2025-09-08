@@ -1,3 +1,54 @@
+// --- TURNOS ---
+document.addEventListener('DOMContentLoaded', () => {
+  // Cambiar pestañas
+  const tabBtns = document.querySelectorAll('.tab-btn');
+  const tabContents = document.querySelectorAll('.tab-content');
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      tabContents.forEach(tc => tc.classList.add('hidden'));
+      document.getElementById(btn.dataset.tab).classList.remove('hidden');
+    });
+  });
+
+  // Guardar turnos
+  const formTurnos = document.getElementById('form-turnos');
+  if (formTurnos) {
+    formTurnos.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const manana_inicio = document.getElementById('manana_inicio').value;
+      const manana_fin = document.getElementById('manana_fin').value;
+      const tarde_inicio = document.getElementById('tarde_inicio').value;
+      const tarde_fin = document.getElementById('tarde_fin').value;
+      const noche_inicio = document.getElementById('noche_inicio').value;
+      const noche_fin = document.getElementById('noche_fin').value;
+      const turnos = {
+        manana: { inicio: manana_inicio, fin: manana_fin },
+        tarde: { inicio: tarde_inicio, fin: tarde_fin },
+        noche: { inicio: noche_inicio, fin: noche_fin }
+      };
+      if (window.electronAPI?.saveTurnos) {
+        const ok = await window.electronAPI.saveTurnos(turnos);
+        document.getElementById('mensaje-turnos').textContent = ok ? 'Turnos guardados correctamente' : 'Error al guardar turnos';
+      }
+    });
+  }
+
+  // Mostrar turnos guardados al cargar
+  if (window.electronAPI?.getTurnos) {
+    window.electronAPI.getTurnos().then(turnos => {
+      if (turnos) {
+        document.getElementById('manana_inicio').value = turnos.manana?.inicio || '';
+        document.getElementById('manana_fin').value = turnos.manana?.fin || '';
+        document.getElementById('tarde_inicio').value = turnos.tarde?.inicio || '';
+        document.getElementById('tarde_fin').value = turnos.tarde?.fin || '';
+        document.getElementById('noche_inicio').value = turnos.noche?.inicio || '';
+        document.getElementById('noche_fin').value = turnos.noche?.fin || '';
+      }
+    });
+  }
+});
 // Selección y guardado de rutas de plantilla dotx y carpeta de destino
 document.addEventListener('DOMContentLoaded', () => {
   // Selección archivo dotx/docx

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Generar DOCX</title>
+  <link rel="stylesheet" href="../estilos/generar.css">
+</head>
+<body>
+  <div class="generar-main-container">
+    <h2>Generar documento DOCX</h2>
+    <form id="form-generar-docx">
+      <div class="campo">
+        <label>Archivo de turnos (mes):</label>
+        <input type="text" id="input-turnos" readonly>
+        <button type="button" id="btn-turnos">Seleccionar archivo</button>
+      </div>
+      <div class="campo">
+        <label>Datos de usuario:</label>
+        <input type="text" id="input-usuario" readonly>
+        <button type="button" id="btn-usuario">Seleccionar archivo</button>
+      </div>
+      <div class="campo">
+        <label>Plantilla DOCX:</label>
+        <input type="text" id="input-plantilla" readonly>
+        <button type="button" id="btn-plantilla-seleccionar">Seleccionar plantilla</button>
+        <button type="button" id="btn-plantilla">Ver plantilla</button>
+      </div>
+      <div class="acciones">
+        <button type="submit" id="btn-generar">Generar DOCX</button>
+        <button type="button" id="btn-cerrar">Cerrar</button>
+      </div>
+    </form>
+    <div id="mensaje-resultado" class="mensaje-resultado"></div>
+  </div>
+  <script src="../js/generar.js"></script>
+</body>
+</html>

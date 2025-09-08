@@ -1,3 +1,8 @@
+document.getElementById('btn-generar')?.addEventListener('click', () => {
+  if (window.electronAPI?.openGenerarWindow) {
+    window.electronAPI.openGenerarWindow();
+  }
+});
 document.getElementById('btn-crear')?.addEventListener('click', () => {
   // Lógica para abrir ventana de creación
   if (window.electronAPI?.openCrearWindow) {
