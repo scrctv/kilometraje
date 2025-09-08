@@ -80,6 +80,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         cell.addEventListener('click', () => {
           if (!selecciones[fechaKey]) selecciones[fechaKey] = { manana: false, tarde: false, noche: false };
+          // Si ya hay otro turno seleccionado para ese día y se intenta seleccionar otro
+          const yaSeleccionado = Object.entries(selecciones[fechaKey]).find(([t, v]) => v && t !== turno);
+          if (!selecciones[fechaKey][turno] && yaSeleccionado) {
+            alert('Solo se puede seleccionar un turno por día. Elimine el turno ya seleccionado para poder marcar otro.');
+            return;
+          }
           selecciones[fechaKey][turno] = !selecciones[fechaKey][turno];
           renderDias();
           renderListado();
