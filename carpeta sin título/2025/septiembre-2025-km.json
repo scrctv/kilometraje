@@ -9,11 +9,11 @@
   },
   {
     "fecha": "03-09-2025",
-    "turno": "mañana"
+    "turno": "tarde"
   },
   {
     "fecha": "04-09-2025",
-    "turno": "noche"
+    "turno": "tarde"
   },
   {
     "fecha": "05-09-2025",
@@ -21,38 +21,6 @@
   },
   {
     "fecha": "06-09-2025",
-    "turno": "noche"
-  },
-  {
-    "fecha": "13-09-2025",
-    "turno": "tarde"
-  },
-  {
-    "fecha": "14-09-2025",
-    "turno": "tarde"
-  },
-  {
-    "fecha": "15-09-2025",
-    "turno": "mañana"
-  },
-  {
-    "fecha": "16-09-2025",
-    "turno": "mañana"
-  },
-  {
-    "fecha": "17-09-2025",
-    "turno": "noche"
-  },
-  {
-    "fecha": "18-09-2025",
-    "turno": "noche"
-  },
-  {
-    "fecha": "29-09-2025",
-    "turno": "noche"
-  },
-  {
-    "fecha": "30-09-2025",
     "turno": "noche"
   }
 ]

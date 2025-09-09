@@ -144,12 +144,19 @@ electron_1.ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuari
                 datosPlantilla[`DIA${i + 1}F`] = fechaF;
                 datosPlantilla[`HID${i + 1}`] = horaI;
                 datosPlantilla[`HFD${i + 1}`] = horaF;
+                // Añadir los campos fijos de usuario
+                datosPlantilla[`itinerario${i + 1}`] = datosUsuario.itinerario || '';
+                datosPlantilla[`mitja${i + 1}`] = datosUsuario.mitja || '';
+                datosPlantilla[`km${i + 1}`] = datosUsuario.km || '';
             }
             else {
                 datosPlantilla[`DIA${i + 1}I`] = '';
                 datosPlantilla[`DIA${i + 1}F`] = '';
                 datosPlantilla[`HID${i + 1}`] = '';
                 datosPlantilla[`HFD${i + 1}`] = '';
+                datosPlantilla[`itinerario${i + 1}`] = '';
+                datosPlantilla[`mitja${i + 1}`] = '';
+                datosPlantilla[`km${i + 1}`] = '';
             }
         }
         // Leer plantilla DOTX/DOCX como Buffer (sin encoding)
