@@ -71,13 +71,73 @@ ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuario, rutaPlan
         return parseInt(anioStr) === anio && meses.includes(parseInt(mes));
       });
     }
-    // Leer horarios de turnos
+    // --- Lógica para {fecha1}, {fecha2}, {fecha3} ---
+    // Calcular mes y año anterior
+    let mesActual = meses && meses.length > 0 ? meses[0] : 1;
+    let anioActual = anio;
+    let mesAnterior = mesActual - 1;
+    let anioAnterior = anioActual;
+    if (mesAnterior === 0) {
+      mesAnterior = 12;
+      anioAnterior = anioActual - 1;
+    }
+    // Buscar archivo de turnos del mes anterior
     const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+    const rutaDestinoPath = path.join(configDir, 'ruta-destino.json');
+    const fechasHabiles: Date[] = [];
+    if (fs.existsSync(rutaDestinoPath)) {
+      const rutaDestino = JSON.parse(fs.readFileSync(rutaDestinoPath, 'utf-8')).rutaDestino;
+      if (rutaDestino) {
+        const mesesNombres = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+        const carpetaAnio = path.join(rutaDestino, anioAnterior.toString());
+        if (fs.existsSync(carpetaAnio)) {
+          const archivos = fs.readdirSync(carpetaAnio).filter(f => f.toLowerCase().includes(mesesNombres[mesAnterior-1]) && f.endsWith('.json'));
+          if (archivos.length > 0) {
+            const archivoFinal = path.join(carpetaAnio, archivos[0]);
+            const datos = JSON.parse(fs.readFileSync(archivoFinal, 'utf-8'));
+            // Extraer fechas únicas del mes anterior
+            const fechasUnicas = Array.from(new Set(datos.map((a: any) => a.fecha))) as string[];
+            // Convertir a objetos Date y filtrar solo días hábiles
+            const fechasDelMes = fechasUnicas
+              .map((f: string) => {
+                const [dia, mes, anio] = f.split('-');
+                return new Date(parseInt(anio), parseInt(mes)-1, parseInt(dia));
+              })
+              .filter((d: Date) => d.getDay() !== 0 && d.getDay() !== 6)
+              .sort((a: Date, b: Date) => b.getTime() - a.getTime()); // Descendente
+            fechasHabiles.push(...fechasDelMes);
+          }
+        }
+      }
+    }
+    // Si no hay archivo, buscar por calendario
+    if (fechasHabiles.length === 0) {
+      // Generar todos los días del mes anterior
+      const diasEnMes = new Date(anioAnterior, mesAnterior, 0).getDate();
+      for (let d = diasEnMes; d >= 1 && fechasHabiles.length < 3; d--) {
+        const fecha = new Date(anioAnterior, mesAnterior-1, d);
+        if (fecha.getDay() !== 0 && fecha.getDay() !== 6) {
+          fechasHabiles.push(fecha);
+        }
+      }
+    }
+    // Leer horarios de turnos
     const turnosPath = path.join(configDir, 'turnos.json');
     const turnos = fs.existsSync(turnosPath) ? JSON.parse(fs.readFileSync(turnosPath, 'utf-8')) : {};
     // Preparar campos para la plantilla (máximo 18 filas)
     const datosPlantilla: Record<string, string> = {};
     const maxFilas = 18;
+    // Tomar los 3 últimos días hábiles (orden ascendente)
+    const ultimos3 = fechasHabiles.slice(0,3).sort((a,b)=>a.getTime()-b.getTime());
+    const mesesNombresLargos = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+    const diasNombres = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+    ultimos3.forEach((fecha, idx) => {
+      const diaNombre = diasNombres[fecha.getDay()];
+      const diaNum = fecha.getDate();
+      const mesNombre = mesesNombresLargos[fecha.getMonth()];
+      const anioNum = fecha.getFullYear();
+      datosPlantilla[`fecha${idx+1}`] = `${diaNombre} ${diaNum} de ${mesNombre} de ${anioNum}`;
+    });
     for (let i = 0; i < maxFilas; i++) {
       if (i < apuntes.length) {
         const apunte = apuntes[i];
@@ -120,6 +180,12 @@ ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuario, rutaPlan
       }
     }
     // Leer plantilla DOTX/DOCX como Buffer (sin encoding)
+    if (!rutaPlantilla) {
+      return { ok: false, msg: 'No se ha especificado una ruta de plantilla.' };
+    }
+    if (!fs.existsSync(rutaPlantilla)) {
+      return { ok: false, msg: `El archivo de plantilla no existe: ${rutaPlantilla}` };
+    }
     const content = fs.readFileSync(rutaPlantilla);
     const PizZip = require('pizzip');
     const Docxtemplater = require('docxtemplater');
