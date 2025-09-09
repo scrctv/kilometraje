@@ -314,7 +314,9 @@ electron_1.ipcMain.on('cerrar-ventana-crear', () => {
 electron_1.ipcMain.on('open-crear-window', () => {
     const crearWin = new electron_1.BrowserWindow({
         width: 1470,
-        height: 956,
+        height: 760,
+        minWidth: 1470,
+        minHeight: 760,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,

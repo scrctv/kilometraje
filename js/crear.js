@@ -73,6 +73,11 @@ document.addEventListener('DOMContentLoaded', () => {
       let diaCont = document.createElement('div');
       diaCont.className = 'dia-container';
       const diaSemanaNombre = fecha.toLocaleDateString('es-ES', { weekday: 'short' });
+          // Detectar sábado (6) o domingo (0)
+          let claseHead = 'dia-header';
+          if (fecha.getDay() === 0 || fecha.getDay() === 6) {
+            claseHead += ' dia-header-rojo';
+          }
       // Renderizar celdas de turnos
       let row = document.createElement('div');
       row.className = 'dia-content-row';
@@ -97,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
         row.appendChild(cell);
       });
-      diaCont.innerHTML = `<div class="dia-header">${d} <span style="font-size:0.9em;color:#cce;">${diaSemanaNombre}</span></div>`;
+          diaCont.innerHTML = `<div class="${claseHead}">${d} <span style="font-size:0.9em;">${diaSemanaNombre}</span></div>`;
       diaCont.appendChild(row);
       semana.appendChild(diaCont);
       if (fecha.getDay() === 0 || d === diasEnMes) {
@@ -300,6 +305,17 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     } catch (error) {
       mensaje.textContent = 'Error al generar documento: ' + error.message;
+    }
+  });
+
+  // Botón abrir carpeta destino
+  const btnAbrirCarpeta = document.getElementById('btn-abrir-carpeta');
+  btnAbrirCarpeta.addEventListener('click', async () => {
+    if (window.electronAPI?.getRutaDestino) {
+      const ruta = await window.electronAPI.getRutaDestino();
+      if (ruta) {
+        window.electronAPI?.abrirEnFinder?.(ruta);
+      }
     }
   });
 });

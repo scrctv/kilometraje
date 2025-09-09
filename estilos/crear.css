@@ -8,6 +8,19 @@
   margin-left: 10px;
   cursor: pointer;
   transition: background 0.2s;
+.dia-header {
+  background: #1976d2;
+  color: #fff;
+  padding: 2px 0;
+  text-align: center;
+  border-radius: 8px 8px 0 0;
+  font-weight: 500;
+  font-size: 0.95em;
+}
+.dia-header-rojo {
+  background: #b71c1c !important;
+  color: #fff !important;
+}
 }
 .btn-accion:last-child {
   background: #b71c1c;
@@ -24,7 +37,7 @@ body {
 
 .crear-main-container {
   width: 1470px;
-  height: 637px;
+  height: 760px;
   display: flex;
   box-sizing: border-box;
   background: #fff;

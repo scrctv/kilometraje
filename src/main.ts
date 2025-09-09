@@ -267,7 +267,9 @@ ipcMain.on('cerrar-ventana-crear', () => {
 ipcMain.on('open-crear-window', () => {
   const crearWin = new BrowserWindow({
     width: 1470,
-    height: 956,
+    height: 760,
+    minWidth: 1470,
+    minHeight: 760,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,

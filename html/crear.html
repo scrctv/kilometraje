@@ -6,7 +6,7 @@
   <link rel="stylesheet" href="../estilos/crear.css">
 </head>
 <body>
-  <div class="crear-main-container" style="height:637px;">
+  <div class="crear-main-container" style="height:760px;">
     <div class="crear-left-container">
       <h2 style="text-align:center;margin:18px 0 10px 0;font-size:1.2em;">Turnos seleccionados</h2>
       <div id="turnos-listado-multicol" class="turnos-listado-multicol">
@@ -23,16 +23,18 @@
         <button id="mes-prev">&#8592;</button>
         <span id="mes-actual"></span>
         <button id="mes-next">&#8594;</button>
-        <div style="flex:1"></div>
-        <button id="btn-guardar" class="btn-accion">Guardar</button>
-        <button id="btn-generar-km" class="btn-accion" style="background:#1976d2;color:#fff;">Generar Km</button>
-        <button id="btn-salir" class="btn-accion">Salir</button>
       </div>
       <div style="margin: 10px 0;">
-        <span id="mensaje-resultado" style="color:#1976d2;"></span>
+        <span id="mensaje-resultado" style="color:#1976d2;font-size:0.9em;"></span>
       </div>
       <div class="dias-mes" id="dias-mes">
         <!-- Aquí se generarán los días dinámicamente -->
+      </div>
+      <div style="display: flex; gap: 8px; justify-content: center; margin-top: 15px; padding: 10px 0;">
+        <button id="btn-guardar" class="btn-accion" style="width:120px;">Guardar</button>
+        <button id="btn-generar-km" class="btn-accion" style="width:120px;background:#1976d2;color:#fff;">Generar Km</button>
+        <button id="btn-abrir-carpeta" class="btn-accion" style="width:120px;">Abrir Carpeta</button>
+        <button id="btn-salir" class="btn-accion" style="width:120px;">Salir</button>
       </div>
     </div>
   </div>
