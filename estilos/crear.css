@@ -1,3 +1,33 @@
+/* Forzar encabezados de sábado y domingo en rojo, sin importar jerarquía */
+.dia-container .dia-header-rojo {
+  background: #b71c1c;
+  color: #fff;
+}
+/* Definición base para encabezados de días */
+.dia-header {
+  background: #1976d2;
+  color: #fff;
+  padding: 6px 0;
+  text-align: center;
+  border-radius: 8px 8px 0 0;
+  font-weight: 500;
+  font-size: 0.95em;
+}
+/* Sábados y domingos en rojo */
+.dia-header-rojo {
+  background: #b71c1c;
+  color: #fff;
+}
+/* Eliminado duplicado .dia-header */
+.dia-header {
+  background: #1976d2;
+  color: #fff;
+  padding: 2px 0;
+  text-align: center;
+  border-radius: 8px 8px 0 0;
+  font-weight: 500;
+  font-size: 0.95em;
+}
 .btn-accion {
   background: #388e3c;
   color: #fff;
@@ -170,10 +200,12 @@ body {
   transition: background 0.15s, color 0.15s;
   user-select: none;
 }
+  
 .dia-content-cell.selected {
-  background: #1976d2;
-  color: #fff;
+  background: #d1d5db;
+  color: #222;
   font-weight: bold;
+  /* gris suave, puedes ajustar a #e0e0e0 o #bdbdbd si prefieres más claro/oscuro */
 }
 .dia-content-cell:last-child {
   border-right: none;
