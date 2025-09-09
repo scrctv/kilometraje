@@ -27,5 +27,6 @@ electron_1.contextBridge.exposeInMainWorld('electronAPI', {
     saveTurnos: (turnos) => electron_1.ipcRenderer.invoke('save-turnos', turnos),
     getTurnos: () => electron_1.ipcRenderer.invoke('get-turnos'),
     saveRutaDatosUsuario: (ruta) => electron_1.ipcRenderer.invoke('save-ruta-datosusuario', ruta),
-    getRutaDatosUsuario: () => electron_1.ipcRenderer.invoke('get-ruta-datosusuario')
+    getRutaDatosUsuario: () => electron_1.ipcRenderer.invoke('get-ruta-datosusuario'),
+    cerrarVentanaDatosUsuario: () => electron_1.ipcRenderer.send('cerrar-ventana-datosusuario')
 });

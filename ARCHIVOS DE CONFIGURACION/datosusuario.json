@@ -17,6 +17,9 @@
   "tren": "☐",
   "vehicleparticular": "☒",
   "altre": "☐",
+  "alojamiento": "☐",
+  "restauracion": "☐",
+  "otros_tipos": "☐",
   "otro": "",
   "marca": "MERCEDES",
   "matricula": "5100HPR",
@@ -26,10 +29,10 @@
   "cargo1": "SUBINSPECTOR, JEFE GRUPO SALA ",
   "nifcargo1": "65667788J",
   "nombrecargo1": "FRANCISCO JOSE CABRERA",
-  "cargo2": "INSP. JEFA, JEFA PROVINCIAL UN",
+  "cargo2": "INSP. JEFA, JEFA PROVINCIAL Unidad Adscrita a la P.N.",
   "nifcargo2": "24344234L",
   "nombrecargo2": "CONCEPCIÓN TORQUEMADA",
-  "itinerario": "VALENCIA-L'ELIANA-VALENCIA",
+  "itinerario": "",
   "mitja": "V.P.",
   "km": "36"
 }

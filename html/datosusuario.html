@@ -6,21 +6,22 @@
   <meta name="viewport" content="width=400, initial-scale=1.0">
   <title>Datos de Usuario</title>
   <link rel="stylesheet" href="../estilos/datosusuario.css">
+  <link rel="stylesheet" href="../estilos/modal-mensaje.css">
 </head>
 <body>
   <form id="form-usuario" class="form-usuario">
     <fieldset>
       <legend>A. Datos personales</legend>
       <label for="nif">NIF</label>
-      <input type="text" id="nif" name="nif" maxlength="9" required>
+  <input type="text" id="nif" name="nif" maxlength="80" required>
       <label for="nom">NOM</label>
-      <input type="text" id="nom" name="nom" maxlength="30" required>
+  <input type="text" id="nom" name="nom" maxlength="80" required>
       <label for="cognoms">COGNOMS</label>
-      <input type="text" id="cognoms" name="cognoms" maxlength="30" required>
+  <input type="text" id="cognoms" name="cognoms" maxlength="80" required>
       <label for="grup">GRUP</label>
-      <input type="text" id="grup" name="grup" maxlength="20">
+  <input type="text" id="grup" name="grup" maxlength="80">
       <label for="nivell">NIVELL</label>
-      <input type="text" id="nivell" name="nivell" maxlength="20">
+  <input type="text" id="nivell" name="nivell" maxlength="80">
       <label for="departament">DEPARTAMENT</label>
   <input type="text" id="departament" name="departament" maxlength="80">
       <label for="conselleria">CONSELLERIA/ORGANISME</label>
@@ -38,7 +39,7 @@
   <label for="detall">DETALL DELS MOTIUS:</label>
   <textarea id="detall" name="detall" maxlength="500" rows="2" style="min-width: 80ch;"></textarea>
   <label for="itinerario">ITINERARIO:</label>
-  <input type="text" id="itinerario" name="itinerario" maxlength="200">
+  <input type="text" id="itinerario" name="itinerario" maxlength="80">
     </fieldset>
     <fieldset>
       <legend>C. Medio de transporte y cargos</legend>
@@ -49,15 +50,18 @@
         <label><input type="checkbox" id="avio" name="avio"> AVIÓ</label>
         <label><input type="checkbox" id="altre" name="altre"> ALTRE</label>
         <label for="otro">OTRO</label>
-        <input type="text" id="otro" name="otro" maxlength="20">
+  <input type="text" id="otro" name="otro" maxlength="80">
+  <label><input type="checkbox" id="alojamiento" name="alojamiento"> ALOJAMIENTO</label>
+  <label><input type="checkbox" id="restauracion" name="restauracion"> RESTAURACIÓN</label>
+  <label><input type="checkbox" id="otros_tipos" name="otros_tipos"> OTROS TIPOS</label>
       </div>
       <!-- Segunda línea: VEHICLE PARTICULAR, MARCA, MATRÍCULA -->
       <div class="checks-group">
         <label><input type="checkbox" id="vehicleparticular" name="vehicleparticular"> VEHICLE PARTICULAR</label>
         <label for="marca">MARCA</label>
-        <input type="text" id="marca" name="marca" maxlength="20">
+  <input type="text" id="marca" name="marca" maxlength="80">
         <label for="matricula">MATRÍCULA</label>
-        <input type="text" id="matricula" name="matricula" maxlength="10">
+  <input type="text" id="matricula" name="matricula" maxlength="80">
       </div>
       <!-- Tercera línea: PAGAMENT ANTICIPAR, SI, NO, PEATGE -->
       <div class="checks-group">
@@ -65,43 +69,44 @@
         <label><input type="radio" id="pagament_si" name="pagament" value="si"> SI</label>
         <label><input type="radio" id="pagament_no" name="pagament" value="no"> NO</label>
         <label for="peatge">PEATGE</label>
-        <input type="text" id="peatge" name="peatge" maxlength="20">
+  <input type="text" id="peatge" name="peatge" maxlength="80">
       </div>
       <!-- Campos adicionales: MITJA y KM -->
       <div class="campo-linea">
         <label for="mitja">MITJÀ</label>
-        <input type="text" id="mitja" name="mitja" maxlength="20">
+  <input type="text" id="mitja" name="mitja" maxlength="80">
         <label for="km">KM</label>
         <input type="number" id="km" name="km" min="0" max="9999" step="0.01">
       </div>
       <!-- El resto, uno por línea -->
       <div class="campo-linea">
         <label for="cargo1">CARGO 1</label>
-        <input type="text" id="cargo1" name="cargo1" maxlength="30">
+  <input type="text" id="cargo1" name="cargo1" maxlength="80">
       </div>
       <div class="campo-linea">
         <label for="nifcargo1">NIF CARGO 1</label>
-        <input type="text" id="nifcargo1" name="nifcargo1" maxlength="9">
+  <input type="text" id="nifcargo1" name="nifcargo1" maxlength="80">
       </div>
       <div class="campo-linea">
         <label for="nombrecargo1">NOMBRE CARGO 1</label>
-        <input type="text" id="nombrecargo1" name="nombrecargo1" maxlength="30">
+  <input type="text" id="nombrecargo1" name="nombrecargo1" maxlength="80">
       </div>
       <div class="campo-linea">
         <label for="cargo2">CARGO 2</label>
-        <input type="text" id="cargo2" name="cargo2" maxlength="30">
+  <input type="text" id="cargo2" name="cargo2" maxlength="80">
       </div>
       <div class="campo-linea">
         <label for="nifcargo2">NIF CARGO 2</label>
-        <input type="text" id="nifcargo2" name="nifcargo2" maxlength="9">
+  <input type="text" id="nifcargo2" name="nifcargo2" maxlength="80">
       </div>
       <div class="campo-linea">
         <label for="nombrecargo2">NOMBRE CARGO 2</label>
-        <input type="text" id="nombrecargo2" name="nombrecargo2" maxlength="30">
+  <input type="text" id="nombrecargo2" name="nombrecargo2" maxlength="80">
       </div>
     </fieldset>
     <button type="submit">Guardar</button>
   </form>
+  <script src="../js/modal-mensaje.js"></script>
   <script src="../js/datosusuario.js"></script>
 </body>
 </html>

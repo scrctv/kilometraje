@@ -1,4 +1,3 @@
-
 // ¡¡¡NO TOCAR!!!
 // TODOS LOS IMPORTS DEBEN IR AL PRINCIPIO DE ESTE ARCHIVO.
 // NO PONGAS NINGÚN CÓDIGO, HANDLER NI COMENTARIO ANTES DE LOS IMPORTS.
@@ -8,6 +7,19 @@
 import * as fs from 'fs';
 import { app, BrowserWindow, ipcMain, dialog } from 'electron';
 import * as path from 'path';
+
+// Cerrar ventana datosusuario
+ipcMain.on('cerrar-ventana-datosusuario', () => {
+  const allWindows = BrowserWindow.getAllWindows();
+  for (const win of allWindows) {
+    if (win.getTitle && win.getTitle() === 'Datos de Usuario') {
+      win.close();
+      return;
+    }
+    // Alternativamente, si usas un identificador personalizado:
+    // if (win.webContents.getURL().includes('datosusuario.html')) { win.close(); return; }
+  }
+});
 
 // Guardar y recuperar la última ruta de datosusuario.json
 ipcMain.handle('save-ruta-datosusuario', async (event, ruta) => {

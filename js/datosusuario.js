@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   // Inicializar todos los checks deseleccionados por defecto
   [
     'comissio', 'curs', 'trasllat', 'sessions', 'altres',
-    'vehicleoficial', 'avio', 'tren', 'vehicleparticular', 'altre'
+  'vehicleoficial', 'avio', 'tren', 'vehicleparticular', 'altre', 'alojamiento', 'restauracion', 'otros_tipos'
   ].forEach(id => {
     document.getElementById(id).checked = false;
   });
@@ -29,11 +29,14 @@ document.addEventListener('DOMContentLoaded', async function() {
       document.getElementById('altres').checked = datos.altres === '☒';
       document.getElementById('detall').value = datos.detall || '';
       // Checks C
-      document.getElementById('vehicleoficial').checked = datos.vehicleoficial === '☒';
-      document.getElementById('avio').checked = datos.avio === '☒';
-      document.getElementById('tren').checked = datos.tren === '☒';
-      document.getElementById('vehicleparticular').checked = datos.vehicleparticular === '☒';
-      document.getElementById('altre').checked = datos.altre === '☒';
+  document.getElementById('vehicleoficial').checked = datos.vehicleoficial === '☒';
+  document.getElementById('avio').checked = datos.avio === '☒';
+  document.getElementById('tren').checked = datos.tren === '☒';
+  document.getElementById('vehicleparticular').checked = datos.vehicleparticular === '☒';
+  document.getElementById('altre').checked = datos.altre === '☒';
+  document.getElementById('alojamiento').checked = datos.alojamiento === '☒';
+  document.getElementById('restauracion').checked = datos.restauracion === '☒';
+  document.getElementById('otros_tipos').checked = datos.otros_tipos === '☒';
       document.getElementById('otro').value = datos.otro || '';
       document.getElementById('marca').value = datos.marca || '';
       document.getElementById('matricula').value = datos.matricula || '';
@@ -81,7 +84,10 @@ document.getElementById('form-usuario')?.addEventListener('submit', async functi
     document.getElementById('avio'),
     document.getElementById('tren'),
     document.getElementById('vehicleparticular'),
-    document.getElementById('altre')
+    document.getElementById('altre'),
+    document.getElementById('alojamiento'),
+    document.getElementById('restauracion'),
+    document.getElementById('otros_tipos')
   ];
   const algunoMarcadoC = checksC.some(chk => chk.checked);
   const pagamentSi = document.getElementById('pagament_si').checked;
@@ -150,6 +156,9 @@ document.getElementById('form-usuario')?.addEventListener('submit', async functi
   tren: document.getElementById('tren').checked ? '☒' : '☐',
   vehicleparticular: document.getElementById('vehicleparticular').checked ? '☒' : '☐',
   altre: document.getElementById('altre').checked ? '☒' : '☐',
+  alojamiento: document.getElementById('alojamiento').checked ? '☒' : '☐',
+  restauracion: document.getElementById('restauracion').checked ? '☒' : '☐',
+  otros_tipos: document.getElementById('otros_tipos').checked ? '☒' : '☐',
     otro: document.getElementById('otro').value,
     marca: document.getElementById('marca').value,
     matricula: document.getElementById('matricula').value,
@@ -168,6 +177,26 @@ document.getElementById('form-usuario')?.addEventListener('submit', async functi
   };
   if (window.electronAPI?.saveDatosUsuario) {
     await window.electronAPI.saveDatosUsuario(data);
-    alert('Datos guardados correctamente');
+    const cerrarVentana = () => {
+      if (window.electronAPI?.cerrarVentanaDatosUsuario) {
+        window.electronAPI.cerrarVentanaDatosUsuario();
+      }
+    };
+    const handler = function(e) {
+      if (e.target && e.target.classList.contains('modal-mensaje-km-btn')) {
+        cerrarVentana();
+        document.removeEventListener('click', handler);
+      }
+    };
+    if (typeof mostrarModalMensaje === 'function') {
+      mostrarModalMensaje('Datos guardados correctamente', 'success');
+      document.addEventListener('click', handler);
+    } else if (window.mostrarModalMensaje) {
+      window.mostrarModalMensaje('Datos guardados correctamente', 'success');
+      document.addEventListener('click', handler);
+    } else {
+      alert('Datos guardados correctamente');
+      cerrarVentana();
+    }
   }
 });

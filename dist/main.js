@@ -42,6 +42,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const fs = __importStar(require("fs"));
 const electron_1 = require("electron");
 const path = __importStar(require("path"));
+// Cerrar ventana datosusuario
+electron_1.ipcMain.on('cerrar-ventana-datosusuario', () => {
+    const allWindows = electron_1.BrowserWindow.getAllWindows();
+    for (const win of allWindows) {
+        if (win.getTitle && win.getTitle() === 'Datos de Usuario') {
+            win.close();
+            return;
+        }
+        // Alternativamente, si usas un identificador personalizado:
+        // if (win.webContents.getURL().includes('datosusuario.html')) { win.close(); return; }
+    }
+});
 // Guardar y recuperar la última ruta de datosusuario.json
 electron_1.ipcMain.handle('save-ruta-datosusuario', async (event, ruta) => {
     try {
