@@ -1,0 +1,35 @@
+# Node modules
+node_modules/
+
+# Electron build output
+/dist/
+/build/
+
+# OS files
+.DS_Store
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Env files
+.env
+
+# VSCode
+.vscode/
+
+# Mac system files
+Icon?
+
+# Others
+*.log
+*.tmp
+
+# Exclude Electron binaries
+**/Electron.app/
+**/electron.exe
+**/electron
+
+# Exclude packaged apps
+release/
