@@ -218,4 +218,88 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-salir').addEventListener('click', () => {
     window.electronAPI.cerrarVentana();
   });
+
+  // Botón Generar Km
+  const btnGenerarKm = document.getElementById('btn-generar-km');
+  const mensaje = document.getElementById('mensaje-resultado');
+
+  btnGenerarKm.addEventListener('click', async () => {
+    mensaje.textContent = '';
+    
+    // Obtener rutas predeterminadas automáticamente
+    let rutaUsuario = '';
+    let rutaPlantilla = '';
+    
+    try {
+      // Obtener ruta de usuario predeterminada
+      if (window.electronAPI?.getRutaDatosUsuario) {
+        rutaUsuario = await window.electronAPI.getRutaDatosUsuario();
+        if (!rutaUsuario) {
+          // Usar ruta por defecto si no hay guardada
+          rutaUsuario = 'ARCHIVOS DE CONFIGURACION/datosusuario.json';
+        }
+      }
+      
+      // Obtener ruta de plantilla predeterminada
+      if (window.electronAPI?.getRutaDotx) {
+        rutaPlantilla = await window.electronAPI.getRutaDotx();
+      }
+      
+      if (!rutaUsuario || !rutaPlantilla) {
+        mensaje.textContent = 'Error: No se encontraron las rutas de usuario o plantilla configuradas.';
+        return;
+      }
+    } catch (error) {
+      mensaje.textContent = 'Error al obtener las rutas predeterminadas.';
+      return;
+    }
+    
+    // El mes seleccionado es el que está en el calendario (mes + 1)
+    const mesesSeleccionados = [mes + 1];
+    mensaje.textContent = 'Generando documento...';
+    
+    try {
+      // Generar estructura de datos igual que en guardar
+      const datos = [];
+      const fechas = Object.keys(selecciones).sort();
+      fechas.forEach(fechaKey => {
+        if (Object.values(selecciones[fechaKey]).some(v => v)) {
+          turnos.forEach(turno => {
+            if (selecciones[fechaKey][turno]) {
+              datos.push({ fecha: fechaKey, turno });
+            }
+          });
+        }
+      });
+      
+      if (datos.length === 0) {
+        mensaje.textContent = 'No hay turnos seleccionados para generar.';
+        return;
+      }
+      
+      // Guardar archivo temporal de turnos
+      const tempPath = await window.electronAPI.guardarTurnos(datos, 'temp', anio);
+      const rutaTurnos = typeof tempPath === 'string' ? tempPath : (tempPath?.ruta || '');
+      if (!rutaTurnos) {
+        mensaje.textContent = 'No se pudo guardar el archivo temporal de turnos.';
+        return;
+      }
+      
+      const resultado = await window.electronAPI.generarDocx({
+        rutaTurnos,
+        rutaUsuario,
+        rutaPlantilla,
+        anio,
+        meses: mesesSeleccionados
+      });
+      
+      if (resultado.ok) {
+        mensaje.textContent = 'Documento generado correctamente: ' + resultado.nombre;
+      } else {
+        mensaje.textContent = 'Error: ' + resultado.msg;
+      }
+    } catch (error) {
+      mensaje.textContent = 'Error al generar documento: ' + error.message;
+    }
+  });
 });
