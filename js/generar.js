@@ -135,19 +135,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Generar DOCX con año y meses seleccionados
   btnGenerar.addEventListener('click', async () => {
-    mensaje.textContent = '';
     const rutaUsuario = inputUsuario.value;
     const rutaPlantilla = inputPlantilla.value;
     if (!rutaUsuario || !rutaPlantilla) {
-      mensaje.textContent = 'Selecciona archivo de usuario y plantilla.';
+      mostrarModalMensaje('Selecciona archivo de usuario y plantilla.', 'info');
       return;
     }
     if (mesesSeleccionados.length === 0) {
-      mensaje.textContent = 'Selecciona al menos un mes.';
+      mostrarModalMensaje('Selecciona al menos un mes.', 'info');
       return;
     }
-    mensaje.textContent = 'Generando documento...';
-    
+    mostrarModalMensaje('Generando documento...', 'info', 3000);
     // Cargar datos de turnos desde los archivos JSON generados por mes/año
     try {
       let todosLosTurnos = [];
@@ -158,17 +156,15 @@ document.addEventListener('DOMContentLoaded', () => {
           todosLosTurnos = todosLosTurnos.concat(datosMes.datos);
         }
       }
-      
       if (todosLosTurnos.length === 0) {
-        mensaje.textContent = 'No hay CREADO un arcchivo para el mes seleccionado.';
+        mostrarModalMensaje('No hay CREADO un archivo para el mes seleccionado.', 'info');
         return;
       }
-
       // Crear archivo temporal con todos los turnos
       const tempPath = await window.electronAPI.guardarTurnos(todosLosTurnos, 'temp', anioActual);
       const rutaTurnos = typeof tempPath === 'string' ? tempPath : (tempPath?.ruta || '');
       if (!rutaTurnos) {
-        mensaje.textContent = 'No se pudo guardar el archivo temporal de turnos.';
+        mostrarModalMensaje('No se pudo guardar el archivo temporal de turnos.', 'error');
         return;
       }
       const resultado = await window.electronAPI.generarDocx({
@@ -178,14 +174,13 @@ document.addEventListener('DOMContentLoaded', () => {
         anio: anioActual,
         meses: mesesSeleccionados
       });
-      
       if (resultado.ok) {
-        mensaje.textContent = 'Documento generado correctamente: ' + resultado.nombre;
+        mostrarModalMensaje('Documento generado correctamente: ' + resultado.nombre, 'success');
       } else {
-        mensaje.textContent = 'Error: ' + resultado.msg;
+        mostrarModalMensaje('Error: ' + resultado.msg, 'error');
       }
     } catch (error) {
-      mensaje.textContent = 'Error al cargar datos de turnos: ' + error.message;
+      mostrarModalMensaje('Error al cargar datos de turnos: ' + error.message, 'error');
     }
   });
 });

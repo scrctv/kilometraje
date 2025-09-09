@@ -93,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
           // Si ya hay otro turno seleccionado para ese día y se intenta seleccionar otro
           const yaSeleccionado = Object.entries(selecciones[fechaKey]).find(([t, v]) => v && t !== turno);
           if (!selecciones[fechaKey][turno] && yaSeleccionado) {
-            alert('Solo se puede seleccionar un turno por día. Elimine el turno ya seleccionado para poder marcar otro.');
+            mostrarModalMensaje('Solo se puede seleccionar un turno por día. Elimine el turno ya seleccionado para poder marcar otro.', 'error');
             return;
           }
           selecciones[fechaKey][turno] = !selecciones[fechaKey][turno];
@@ -208,14 +208,14 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
     if (datos.length === 0) {
-      alert('No hay turnos seleccionados para guardar.');
+      mostrarModalMensaje('No hay turnos seleccionados para guardar.', 'info');
       return;
     }
     const resultado = await window.electronAPI.guardarTurnos(datos, meses[mes], anio);
     if (resultado.ok) {
-      alert('Guardado correctamente.');
+      mostrarModalMensaje('Guardado correctamente.', 'success');
     } else {
-      alert('No se pudo guardar: ' + resultado.msg);
+      mostrarModalMensaje('No se pudo guardar: ' + resultado.msg, 'error');
     }
   });
 
@@ -229,12 +229,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const mensaje = document.getElementById('mensaje-resultado');
 
   btnGenerarKm.addEventListener('click', async () => {
-    mensaje.textContent = '';
-    
     // Obtener rutas predeterminadas automáticamente
     let rutaUsuario = '';
     let rutaPlantilla = '';
-    
     try {
       // Obtener ruta de usuario predeterminada
       if (window.electronAPI?.getRutaDatosUsuario) {
@@ -244,25 +241,21 @@ document.addEventListener('DOMContentLoaded', () => {
           rutaUsuario = 'ARCHIVOS DE CONFIGURACION/datosusuario.json';
         }
       }
-      
       // Obtener ruta de plantilla predeterminada
       if (window.electronAPI?.getRutaDotx) {
         rutaPlantilla = await window.electronAPI.getRutaDotx();
       }
-      
       if (!rutaUsuario || !rutaPlantilla) {
-        mensaje.textContent = 'Error: No se encontraron las rutas de usuario o plantilla configuradas.';
+        mostrarModalMensaje('Error: No se encontraron las rutas de usuario o plantilla configuradas.', 'error');
         return;
       }
     } catch (error) {
-      mensaje.textContent = 'Error al obtener las rutas predeterminadas.';
+      mostrarModalMensaje('Error al obtener las rutas predeterminadas.', 'error');
       return;
     }
-    
     // El mes seleccionado es el que está en el calendario (mes + 1)
     const mesesSeleccionados = [mes + 1];
-    mensaje.textContent = 'Generando documento...';
-    
+    mostrarModalMensaje('Generando documento...', 'info', 3000);
     try {
       // Generar estructura de datos igual que en guardar
       const datos = [];
@@ -276,20 +269,17 @@ document.addEventListener('DOMContentLoaded', () => {
           });
         }
       });
-      
       if (datos.length === 0) {
-        mensaje.textContent = 'No hay turnos seleccionados para generar.';
+        mostrarModalMensaje('No hay turnos seleccionados para generar.', 'info');
         return;
       }
-      
       // Guardar archivo temporal de turnos
       const tempPath = await window.electronAPI.guardarTurnos(datos, 'temp', anio);
       const rutaTurnos = typeof tempPath === 'string' ? tempPath : (tempPath?.ruta || '');
       if (!rutaTurnos) {
-        mensaje.textContent = 'No se pudo guardar el archivo temporal de turnos.';
+        mostrarModalMensaje('No se pudo guardar el archivo temporal de turnos.', 'error');
         return;
       }
-      
       const resultado = await window.electronAPI.generarDocx({
         rutaTurnos,
         rutaUsuario,
@@ -297,14 +287,13 @@ document.addEventListener('DOMContentLoaded', () => {
         anio,
         meses: mesesSeleccionados
       });
-      
       if (resultado.ok) {
-        mensaje.textContent = 'Documento generado correctamente: ' + resultado.nombre;
+        mostrarModalMensaje('Documento generado correctamente: ' + resultado.nombre, 'success');
       } else {
-        mensaje.textContent = 'Error: ' + resultado.msg;
+        mostrarModalMensaje('Error: ' + resultado.msg, 'error');
       }
     } catch (error) {
-      mensaje.textContent = 'Error al generar documento: ' + error.message;
+      mostrarModalMensaje('Error al generar documento: ' + error.message, 'error');
     }
   });
 

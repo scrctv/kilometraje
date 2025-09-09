@@ -1,22 +1,118 @@
 [
   {
-    "fecha": "01-08-2025",
+    "fecha": "01-09-2025",
     "turno": "mañana"
   },
   {
-    "fecha": "02-08-2025",
+    "fecha": "02-09-2025",
+    "turno": "tarde"
+  },
+  {
+    "fecha": "03-09-2025",
+    "turno": "tarde"
+  },
+  {
+    "fecha": "04-09-2025",
+    "turno": "tarde"
+  },
+  {
+    "fecha": "05-09-2025",
     "turno": "mañana"
   },
   {
-    "fecha": "16-08-2025",
+    "fecha": "06-09-2025",
+    "turno": "tarde"
+  },
+  {
+    "fecha": "07-09-2025",
+    "turno": "tarde"
+  },
+  {
+    "fecha": "08-09-2025",
+    "turno": "tarde"
+  },
+  {
+    "fecha": "09-09-2025",
+    "turno": "tarde"
+  },
+  {
+    "fecha": "10-09-2025",
+    "turno": "tarde"
+  },
+  {
+    "fecha": "12-09-2025",
+    "turno": "tarde"
+  },
+  {
+    "fecha": "13-09-2025",
+    "turno": "tarde"
+  },
+  {
+    "fecha": "14-09-2025",
+    "turno": "tarde"
+  },
+  {
+    "fecha": "15-09-2025",
+    "turno": "tarde"
+  },
+  {
+    "fecha": "16-09-2025",
     "turno": "mañana"
   },
   {
-    "fecha": "23-08-2025",
+    "fecha": "17-09-2025",
+    "turno": "tarde"
+  },
+  {
+    "fecha": "18-09-2025",
+    "turno": "mañana"
+  },
+  {
+    "fecha": "19-09-2025",
+    "turno": "tarde"
+  },
+  {
+    "fecha": "20-09-2025",
     "turno": "noche"
   },
   {
-    "fecha": "24-08-2025",
+    "fecha": "21-09-2025",
+    "turno": "tarde"
+  },
+  {
+    "fecha": "22-09-2025",
+    "turno": "tarde"
+  },
+  {
+    "fecha": "23-09-2025",
+    "turno": "mañana"
+  },
+  {
+    "fecha": "24-09-2025",
+    "turno": "mañana"
+  },
+  {
+    "fecha": "25-09-2025",
+    "turno": "tarde"
+  },
+  {
+    "fecha": "26-09-2025",
+    "turno": "mañana"
+  },
+  {
+    "fecha": "27-09-2025",
     "turno": "noche"
+  },
+  {
+    "fecha": "28-09-2025",
+    "turno": "noche"
+  },
+  {
+    "fecha": "29-09-2025",
+    "turno": "noche"
+  },
+  {
+    "fecha": "30-09-2025",
+    "turno": "tarde"
   }
 ]

@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Generar Kilometraje</title>
   <link rel="stylesheet" href="../estilos/crear.css">
+  <link rel="stylesheet" href="../estilos/modal-mensaje.css">
 </head>
 <body>
   <div class="crear-main-container" style="height:760px;">
@@ -24,9 +25,7 @@
         <span id="mes-actual"></span>
         <button id="mes-next">&#8594;</button>
       </div>
-      <div style="margin: 10px 0;">
-        <span id="mensaje-resultado" style="color:#1976d2;font-size:0.9em;"></span>
-      </div>
+  <!-- Modal de mensajes incluido automáticamente -->
       <div class="dias-mes" id="dias-mes">
         <!-- Aquí se generarán los días dinámicamente -->
       </div>
@@ -38,6 +37,7 @@
       </div>
     </div>
   </div>
+  <script src="../js/modal-mensaje.js"></script>
   <script src="../js/crear.js"></script>
 </body>
 </html>

@@ -1,3 +1,17 @@
+/* Estilo solicitado para el contenedor principal de la ventana CREAR */
+.crear-main-container {
+  width: 1470px;
+  height: 760px;
+  display: flex;
+  box-sizing: border-box;
+  background: #c54e4e;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.08);
+}
+body > div {
+  background: #9d6060 !important;
+}
 
 /* Nuevo diseño para ventana GENERAR */
 
@@ -6,7 +20,7 @@
   flex-direction: row;
   width: 1100px;
   min-height: 600px;
-  background: #f8f9fa;
+  background: #9d6060;
   border-radius: 12px;
   box-shadow: 0 2px 16px #0002;
   margin: 0 auto;
