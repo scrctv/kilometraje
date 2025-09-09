@@ -10,8 +10,9 @@
 </head>
 <body>
   <form id="form-usuario" class="form-usuario">
-    <fieldset>
-      <legend>A. Datos personales</legend>
+    <div class="bloque-datos bloque-a">
+      <fieldset>
+        <legend>A. Datos personales</legend>
       <label for="nif">NIF</label>
   <input type="text" id="nif" name="nif" maxlength="80" required>
       <label for="nom">NOM</label>
@@ -26,9 +27,11 @@
   <input type="text" id="departament" name="departament" maxlength="80">
       <label for="conselleria">CONSELLERIA/ORGANISME</label>
   <input type="text" id="conselleria" name="conselleria" maxlength="80">
-    </fieldset>
-    <fieldset>
-      <legend>B. Motivo del desplazamiento</legend>
+      </fieldset>
+    </div>
+    <div class="bloque-datos bloque-b">
+      <fieldset>
+        <legend>B. Motivo del desplazamiento</legend>
       <div class="checks-group">
         <label><input type="checkbox" id="comissio" name="comissio"> COMISSIÓ DE SERVEI</label>
         <label><input type="checkbox" id="curs" name="curs"> CURS JORNADA SEMINARI</label>
@@ -40,36 +43,44 @@
   <textarea id="detall" name="detall" maxlength="500" rows="2" style="min-width: 80ch;"></textarea>
   <label for="itinerario">ITINERARIO:</label>
   <input type="text" id="itinerario" name="itinerario" maxlength="80">
-    </fieldset>
-    <fieldset>
-      <legend>C. Medio de transporte y cargos</legend>
-      <!-- Primera línea: VEHICLE OFICIAL, TREN, AVIÓ, ALTRE, OTRO -->
+      </fieldset>
+    </div>
+    <div class="bloque-datos bloque-c">
+      <fieldset>
+        <legend>C. Medio de transporte y cargos</legend>
+      <!-- Primera línea: VEHICLE OFICIAL, TREN, AVIÓ, ALTRE, ALOJAMIENTO, RESTAURACIÓN, OTROS TIPOS -->
       <div class="checks-group">
         <label><input type="checkbox" id="vehicleoficial" name="vehicleoficial"> VEHICLE OFICIAL</label>
         <label><input type="checkbox" id="tren" name="tren"> TREN</label>
         <label><input type="checkbox" id="avio" name="avio"> AVIÓ</label>
         <label><input type="checkbox" id="altre" name="altre"> ALTRE</label>
+        <label><input type="checkbox" id="alojamiento" name="alojamiento"> ALOJAMIENTO</label>
+        <label><input type="checkbox" id="restauracion" name="restauracion"> RESTAURACIÓN</label>
+        <label><input type="checkbox" id="otros_tipos" name="otros_tipos"> OTROS TIPOS</label>
+      </div>
+      <div class="campo-linea">
         <label for="otro">OTRO</label>
-  <input type="text" id="otro" name="otro" maxlength="80">
-  <label><input type="checkbox" id="alojamiento" name="alojamiento"> ALOJAMIENTO</label>
-  <label><input type="checkbox" id="restauracion" name="restauracion"> RESTAURACIÓN</label>
-  <label><input type="checkbox" id="otros_tipos" name="otros_tipos"> OTROS TIPOS</label>
+        <input type="text" id="otro" name="otro" maxlength="80">
       </div>
       <!-- Segunda línea: VEHICLE PARTICULAR, MARCA, MATRÍCULA -->
       <div class="checks-group">
         <label><input type="checkbox" id="vehicleparticular" name="vehicleparticular"> VEHICLE PARTICULAR</label>
+      </div>
+      <div class="campo-linea">
         <label for="marca">MARCA</label>
-  <input type="text" id="marca" name="marca" maxlength="80">
+        <input type="text" id="marca" name="marca" maxlength="80">
         <label for="matricula">MATRÍCULA</label>
-  <input type="text" id="matricula" name="matricula" maxlength="80">
+        <input type="text" id="matricula" name="matricula" maxlength="80">
       </div>
       <!-- Tercera línea: PAGAMENT ANTICIPAR, SI, NO, PEATGE -->
       <div class="checks-group">
         <span>PAGAMENT ANTICIPAR:</span>
         <label><input type="radio" id="pagament_si" name="pagament" value="si"> SI</label>
         <label><input type="radio" id="pagament_no" name="pagament" value="no"> NO</label>
+      </div>
+      <div class="campo-linea">
         <label for="peatge">PEATGE</label>
-  <input type="text" id="peatge" name="peatge" maxlength="80">
+        <input type="text" id="peatge" name="peatge" maxlength="80">
       </div>
       <!-- Campos adicionales: MITJA y KM -->
       <div class="campo-linea">
@@ -103,7 +114,8 @@
         <label for="nombrecargo2">NOMBRE CARGO 2</label>
   <input type="text" id="nombrecargo2" name="nombrecargo2" maxlength="80">
       </div>
-    </fieldset>
+      </fieldset>
+    </div>
     <button type="submit">Guardar</button>
   </form>
   <script src="../js/modal-mensaje.js"></script>

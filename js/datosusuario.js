@@ -51,8 +51,9 @@ document.addEventListener('DOMContentLoaded', async function() {
       document.getElementById('cargo2').value = datos.cargo2 || '';
       document.getElementById('nifcargo2').value = datos.nifcargo2 || '';
       document.getElementById('nombrecargo2').value = datos.nombrecargo2 || '';
-      document.getElementById('mitja').value = datos.mitja || '';
-      document.getElementById('km').value = datos.km || '';
+  document.getElementById('mitja').value = datos.mitja || '';
+  document.getElementById('km').value = datos.km || '';
+  document.getElementById('itinerario').value = datos.itinerario || '';
     }
   }
 });

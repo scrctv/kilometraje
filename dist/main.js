@@ -405,8 +405,10 @@ electron_1.ipcMain.on('open-crear-window', () => {
 });
 electron_1.ipcMain.on('open-datosusuario-window', () => {
     const datosWin = new electron_1.BrowserWindow({
-        width: 665,
-        height: 600,
+        width: 1470,
+        height: 760,
+        minWidth: 1470,
+        minHeight: 760,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,
