@@ -85,8 +85,9 @@ ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuario, rutaPlan
     }
     // --- Lógica para {fecha1}, {fecha2}, {fecha3} ---
     // Calcular mes y año anterior
-    let mesActual = meses && meses.length > 0 ? meses[0] : 1;
-    let anioActual = anio;
+    const fechaActual = new Date();
+    let mesActual = meses && meses.length > 0 ? meses[0] : (fechaActual.getMonth() + 1);
+    let anioActual = anio || fechaActual.getFullYear();
     let mesAnterior = mesActual - 1;
     let anioAnterior = anioActual;
     if (mesAnterior === 0) {
@@ -97,40 +98,14 @@ ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuario, rutaPlan
     const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
     const rutaDestinoPath = path.join(configDir, 'ruta-destino.json');
     const fechasHabiles: Date[] = [];
-    if (fs.existsSync(rutaDestinoPath)) {
-      const rutaDestino = JSON.parse(fs.readFileSync(rutaDestinoPath, 'utf-8')).rutaDestino;
-      if (rutaDestino) {
-        const mesesNombres = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
-        const carpetaAnio = path.join(rutaDestino, anioAnterior.toString());
-        if (fs.existsSync(carpetaAnio)) {
-          const archivos = fs.readdirSync(carpetaAnio).filter(f => f.toLowerCase().includes(mesesNombres[mesAnterior-1]) && f.endsWith('.json'));
-          if (archivos.length > 0) {
-            const archivoFinal = path.join(carpetaAnio, archivos[0]);
-            const datos = JSON.parse(fs.readFileSync(archivoFinal, 'utf-8'));
-            // Extraer fechas únicas del mes anterior
-            const fechasUnicas = Array.from(new Set(datos.map((a: any) => a.fecha))) as string[];
-            // Convertir a objetos Date y filtrar solo días hábiles
-            const fechasDelMes = fechasUnicas
-              .map((f: string) => {
-                const [dia, mes, anio] = f.split('-');
-                return new Date(parseInt(anio), parseInt(mes)-1, parseInt(dia));
-              })
-              .filter((d: Date) => d.getDay() !== 0 && d.getDay() !== 6)
-              .sort((a: Date, b: Date) => b.getTime() - a.getTime()); // Descendente
-            fechasHabiles.push(...fechasDelMes);
-          }
-        }
-      }
-    }
-    // Si no hay archivo, buscar por calendario
-    if (fechasHabiles.length === 0) {
-      // Generar todos los días del mes anterior
-      const diasEnMes = new Date(anioAnterior, mesAnterior, 0).getDate();
-      for (let d = diasEnMes; d >= 1 && fechasHabiles.length < 3; d--) {
-        const fecha = new Date(anioAnterior, mesAnterior-1, d);
-        if (fecha.getDay() !== 0 && fecha.getDay() !== 6) {
-          fechasHabiles.push(fecha);
-        }
+    
+    // SIEMPRE calcular desde calendario para garantizar fechas correctas
+    // independientemente de si existe archivo del mes anterior
+    const diasEnMes = new Date(anioAnterior, mesAnterior, 0).getDate();
+    for (let d = diasEnMes; d >= 1 && fechasHabiles.length < 3; d--) {
+      const fecha = new Date(anioAnterior, mesAnterior-1, d);
+      if (fecha.getDay() !== 0 && fecha.getDay() !== 6) {
+        fechasHabiles.push(fecha);
       }
     }
     // Leer horarios de turnos
