@@ -294,6 +294,21 @@ electron_1.ipcMain.on('open-generar-window', () => {
     });
     genWin.loadFile(path.join(__dirname, '../html/generar.html'));
 });
+// Handler para abrir la ventana CONFIGURACION con tamaño igual a datosusuario/crear
+electron_1.ipcMain.on('open-configuracion-window', () => {
+    const configWin = new electron_1.BrowserWindow({
+        width: 1470,
+        height: 760,
+        minWidth: 1470,
+        minHeight: 760,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            contextIsolation: true,
+            nodeIntegration: false
+        }
+    });
+    configWin.loadFile(path.join(__dirname, '../html/configuracion.html'));
+});
 // Handler para cerrar la ventana GENERAR DOCX
 electron_1.ipcMain.on('cerrar-ventana-generar', () => {
     const win = electron_1.BrowserWindow.getFocusedWindow();
