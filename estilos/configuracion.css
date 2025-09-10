@@ -85,3 +85,50 @@ body {
 .tab-content.hidden {
   display: none;
 }
+
+.seccion label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.seccion input[type="number"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+  background: #f9f9f9;
+  margin-bottom: 4px;
+}
+
+.seccion small {
+  color: #666;
+  font-size: 0.95em;
+}
+
+.buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.btn-secondary {
+  padding: 12px 30px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #757F9A 0%, #9099A2 100%);
+  color: #232526;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(90deg, #61677C 0%, #A7B0B8 100%);
+  color: #fff;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}

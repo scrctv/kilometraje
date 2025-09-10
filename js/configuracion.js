@@ -176,4 +176,9 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
   });
 });
 
+// Manejar botón cerrar
+document.getElementById('btn-cerrar').addEventListener('click', () => {
+  window.close();
+});
+
 
