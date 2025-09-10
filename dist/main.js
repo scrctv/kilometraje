@@ -42,6 +42,90 @@ const path = __importStar(require("path"));
 // SI VES 'Cannot access ... before initialization', ES PORQUE HAY ALGO ANTES DE LOS IMPORTS.
 //
 // ⚠️ SCRCTV: ¡REVISA SIEMPRE ESTO ANTES DE GUARDAR! ⚠️
+// ==================== HANDLERS DEL HISTORIAL ====================
+// Abrir ventana historial
+electron_1.ipcMain.on('open-historial-window', () => {
+    // Verificar si ya existe una ventana de historial
+    const existingWindow = electron_1.BrowserWindow.getAllWindows().find(win => win.getTitle && win.getTitle() === 'Historial');
+    if (existingWindow) {
+        existingWindow.focus();
+        return;
+    }
+    const win = new electron_1.BrowserWindow({
+        width: 840,
+        height: 760,
+        resizable: false,
+        title: 'Historial',
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            nodeIntegration: false,
+            contextIsolation: true
+        }
+    });
+    win.loadFile(path.join(__dirname, '../html/historial.html'));
+});
+// Cerrar ventana historial
+electron_1.ipcMain.on('cerrar-ventana-historial', () => {
+    const allWindows = electron_1.BrowserWindow.getAllWindows();
+    for (const win of allWindows) {
+        if (win.getTitle && win.getTitle() === 'Historial') {
+            win.close();
+            return;
+        }
+    }
+});
+// Listar archivos DOCX por año
+electron_1.ipcMain.handle('get-archivos-docx-por-anio', async (event, anio) => {
+    try {
+        const configDir = path.join(electron_1.app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+        const rutaFile = path.join(configDir, 'ruta-meses-guardatos.json');
+        if (!fs.existsSync(rutaFile)) {
+            return [];
+        }
+        const rutaData = JSON.parse(fs.readFileSync(rutaFile, 'utf-8'));
+        const rutaDocx = rutaData.ruta;
+        if (!rutaDocx || !fs.existsSync(rutaDocx)) {
+            return [];
+        }
+        const archivos = fs.readdirSync(rutaDocx);
+        const archivosDocx = archivos.filter(archivo => archivo.endsWith('.docx'));
+        // Filtrar por año en el nombre del archivo (formato: 2025-enero.docx)
+        const archivosDelAnio = archivosDocx.filter(nombre => {
+            return nombre.startsWith(String(anio) + '-');
+        });
+        return archivosDelAnio;
+    }
+    catch (error) {
+        console.error('Error al obtener archivos DOCX:', error);
+        return [];
+    }
+});
+// Abrir archivo DOCX
+electron_1.ipcMain.handle('abrir-archivo-docx', async (event, nombreArchivo, anio) => {
+    try {
+        const configDir = path.join(electron_1.app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+        const rutaFile = path.join(configDir, 'ruta-meses-guardatos.json');
+        if (!fs.existsSync(rutaFile)) {
+            return false;
+        }
+        const rutaData = JSON.parse(fs.readFileSync(rutaFile, 'utf-8'));
+        const rutaDocx = rutaData.ruta;
+        if (!rutaDocx) {
+            return false;
+        }
+        const rutaCompleta = path.join(rutaDocx, nombreArchivo);
+        if (!fs.existsSync(rutaCompleta)) {
+            return false;
+        }
+        await electron_1.shell.openPath(rutaCompleta);
+        return true;
+    }
+    catch (error) {
+        console.error('Error al abrir archivo DOCX:', error);
+        return false;
+    }
+});
+// ==================== FIN HANDLERS DEL HISTORIAL ====================
 // Guardar y recuperar la ruta de los DOCX (ahora 'ruta-meses-guardatos.json')
 electron_1.ipcMain.handle('saveRutaDocx', async (event, ruta) => {
     try {

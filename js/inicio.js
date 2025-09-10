@@ -20,8 +20,11 @@ document.getElementById('btn-configuracion')?.addEventListener('click', () => {
 });
 
 document.getElementById('btn-historial')?.addEventListener('click', () => {
-  // Lógica para abrir ventana de historial
-  alert('Historial');
+  if (window.electronAPI?.openHistorialWindow) {
+    window.electronAPI.openHistorialWindow();
+  } else {
+    alert('No se pudo abrir la ventana de historial.');
+  }
 });
 
 document.getElementById('btn-datosusuario')?.addEventListener('click', () => {

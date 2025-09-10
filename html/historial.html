@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Historial</title>
+  <link rel="stylesheet" href="../estilos/historial.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>Historial de Archivos</h1>
+    </header>
+    
+    <div class="year-selector">
+      <label for="year-select">Seleccionar Año:</label>
+      <select id="year-select">
+        <!-- Los años se cargarán dinámicamente -->
+      </select>
+    </div>
+    
+    <div class="archivos-container">
+      <div id="archivos-lista" class="archivos-lista">
+        <p class="mensaje-info">Selecciona un año para ver los archivos</p>
+      </div>
+    </div>
+    
+    <div class="buttons">
+      <button id="btn-cerrar" class="btn-secondary">Cerrar</button>
+    </div>
+  </div>
+  
+  <script src="../js/historial.js"></script>
+</body>
+</html>

@@ -29,5 +29,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
   getTurnos: () => ipcRenderer.invoke('get-turnos'),
   saveRutaDatosUsuario: (ruta: string) => ipcRenderer.invoke('save-ruta-datosusuario', ruta),
   getRutaDatosUsuario: () => ipcRenderer.invoke('get-ruta-datosusuario'),
-  cerrarVentanaDatosUsuario: () => ipcRenderer.send('cerrar-ventana-datosusuario')
+  cerrarVentanaDatosUsuario: () => ipcRenderer.send('cerrar-ventana-datosusuario'),
+  
+  // Funciones del historial
+  openHistorialWindow: () => ipcRenderer.send('open-historial-window'),
+  cerrarVentanaHistorial: () => ipcRenderer.send('cerrar-ventana-historial'),
+  getArchivosDocxPorAnio: (anio: number) => ipcRenderer.invoke('get-archivos-docx-por-anio', anio),
+  abrirArchivoDocx: (nombreArchivo: string, anio: number) => ipcRenderer.invoke('abrir-archivo-docx', nombreArchivo, anio)
 });
