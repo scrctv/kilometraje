@@ -129,14 +129,24 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
     const diasTrabajados = diasUnicos.size;
-    // Leer unidad por km
+
+    // Leer unidad por km y km de datosusuario.json
     let euros = 0;
+    let unidadPorKm = 0;
+    let km = 0;
     if (window.electronAPI.getUnidadPorKm) {
       const valor = await window.electronAPI.getUnidadPorKm();
-      euros = Number(valor) * diasTrabajados;
+      unidadPorKm = Number(valor) || 0;
     }
+    if (window.electronAPI.getDatosUsuario) {
+      const datosUsuario = await window.electronAPI.getDatosUsuario();
+      if (datosUsuario && datosUsuario.km) {
+        km = Number(datosUsuario.km) || 0;
+      }
+    }
+    euros = diasTrabajados * unidadPorKm * km;
     const resumenDiv = document.getElementById('resumen-km');
-    resumenDiv.innerHTML = `<span>Días trabajados: <b>${diasTrabajados}</b></span> <span>EUROS: <b>${euros.toFixed(2)}</b></span>`;
+    resumenDiv.innerHTML = `<span>Días trabajados: <b>${diasTrabajados}</b></span> <span>Unidad: <b>${unidadPorKm}</b></span> <span>KM: <b>${km}</b></span> <span>EUROS: <b>${euros.toFixed(2)}</b></span>`;
   }
 
   function renderListado() {
