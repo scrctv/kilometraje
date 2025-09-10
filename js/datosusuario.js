@@ -71,11 +71,11 @@ document.getElementById('form-usuario')?.addEventListener('submit', async functi
   const algunoMarcadoB = checksB.some(chk => chk.checked);
   const detalle = document.getElementById('detall').value.trim();
   if (!algunoMarcadoB) {
-    alert('Debes marcar al menos un motivo en el apartado B.');
+    mostrarModalMensaje('Debes marcar al menos un motivo en el apartado B.', 'error');
     return;
   }
   if (!detalle) {
-    alert('El campo DETALL DELS MOTIUS es obligatorio.');
+    mostrarModalMensaje('El campo DETALL DELS MOTIUS es obligatorio.', 'error');
     document.getElementById('detall').focus();
     return;
   }
@@ -94,11 +94,11 @@ document.getElementById('form-usuario')?.addEventListener('submit', async functi
   const pagamentSi = document.getElementById('pagament_si').checked;
   const pagamentNo = document.getElementById('pagament_no').checked;
   if (!algunoMarcadoC) {
-    alert('Debes marcar al menos un medio de transporte en el apartado C.');
+    mostrarModalMensaje('Debes marcar al menos un medio de transporte en el apartado C.', 'error');
     return;
   }
   if (!pagamentSi && !pagamentNo) {
-    alert('Debes seleccionar SI o NO en PAGAMENT ANTICIPAR.');
+    mostrarModalMensaje('Debes seleccionar SI o NO en PAGAMENT ANTICIPAR.', 'error');
     return;
   }
   // Validación campos obligatorios de cargos y marca/matricula si vehicle particular
@@ -117,7 +117,7 @@ document.getElementById('form-usuario')?.addEventListener('submit', async functi
   }
   for (const campo of obligatorios) {
     if (!document.getElementById(campo.id).value.trim()) {
-      alert(`El campo ${campo.label} es obligatorio.`);
+      mostrarModalMensaje(`El campo ${campo.label} es obligatorio.`, 'error');
       document.getElementById(campo.id).focus();
       return;
     }
@@ -127,12 +127,12 @@ document.getElementById('form-usuario')?.addEventListener('submit', async functi
   const departament = document.getElementById('departament').value.trim();
   const conselleria = document.getElementById('conselleria').value.trim();
   if (!departament) {
-    alert('El campo DEPARTAMENT es obligatorio.');
+    mostrarModalMensaje('El campo DEPARTAMENT es obligatorio.', 'error');
     document.getElementById('departament').focus();
     return;
   }
   if (!conselleria) {
-    alert('El campo CONSELLERIA/ORGANISME es obligatorio.');
+    mostrarModalMensaje('El campo CONSELLERIA/ORGANISME es obligatorio.', 'error');
     document.getElementById('conselleria').focus();
     return;
   }

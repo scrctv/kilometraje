@@ -77,11 +77,11 @@ function mostrarArchivos(archivos, anio) {
       try {
         const exito = await window.electronAPI.abrirArchivoDocx(archivo, anio);
         if (!exito) {
-          alert('No se pudo abrir el archivo');
+          mostrarModalMensaje('No se pudo abrir el archivo', 'error');
         }
       } catch (error) {
         console.error('Error al abrir archivo:', error);
-        alert('Error al abrir el archivo');
+        mostrarModalMensaje('Error al abrir el archivo', 'error');
       }
     });
     

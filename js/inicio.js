@@ -15,7 +15,7 @@ document.getElementById('btn-configuracion')?.addEventListener('click', () => {
   if (window.electronAPI && window.electronAPI.openConfigWindow) {
     window.electronAPI.openConfigWindow();
   } else {
-    alert('No se pudo abrir la ventana de configuración.');
+    mostrarModalMensaje('No se pudo abrir la ventana de configuración.', 'error');
   }
 });
 
@@ -23,7 +23,7 @@ document.getElementById('btn-historial')?.addEventListener('click', () => {
   if (window.electronAPI?.openHistorialWindow) {
     window.electronAPI.openHistorialWindow();
   } else {
-    alert('No se pudo abrir la ventana de historial.');
+    mostrarModalMensaje('No se pudo abrir la ventana de historial.', 'error');
   }
 });
 
@@ -31,7 +31,7 @@ document.getElementById('btn-datosusuario')?.addEventListener('click', () => {
   if (window.electronAPI?.openDatosUsuarioWindow) {
     window.electronAPI.openDatosUsuarioWindow();
   } else {
-    alert('No se pudo abrir la ventana de datos de usuario.');
+    mostrarModalMensaje('No se pudo abrir la ventana de datos de usuario.', 'error');
   }
 });
 

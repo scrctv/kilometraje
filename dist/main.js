@@ -93,7 +93,28 @@ electron_1.ipcMain.handle('get-archivos-docx-por-anio', async (event, anio) => {
         const archivosDelAnio = archivosDocx.filter(nombre => {
             return nombre.startsWith(String(anio) + '-');
         });
-        return archivosDelAnio;
+        // Definir orden cronológico de meses
+        const ordenMeses = [
+            'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+            'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+        ];
+        // Ordenar archivos por mes cronológico
+        const archivosOrdenados = archivosDelAnio.sort((a, b) => {
+            // Extraer el mes del nombre del archivo
+            const mesA = a.replace('.docx', '').split('-')[1]?.toLowerCase() || '';
+            const mesB = b.replace('.docx', '').split('-')[1]?.toLowerCase() || '';
+            const indexA = ordenMeses.indexOf(mesA);
+            const indexB = ordenMeses.indexOf(mesB);
+            // Si algún mes no se encuentra en el array, ponerlo al final
+            if (indexA === -1 && indexB === -1)
+                return a.localeCompare(b);
+            if (indexA === -1)
+                return 1;
+            if (indexB === -1)
+                return -1;
+            return indexA - indexB;
+        });
+        return archivosOrdenados;
     }
     catch (error) {
         console.error('Error al obtener archivos DOCX:', error);
