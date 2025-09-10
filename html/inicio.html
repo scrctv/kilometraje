@@ -4,17 +4,29 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=400, initial-scale=1.0">
-  <title>KM - Inicio</title>
+  <title>KILOMETRAJE</title>
   <link rel="stylesheet" href="../estilos/inicio.css">
 </head>
 <body>
   <div class="container">
-  <button id="btn-crear">Crear Kilometraje</button>
-  <button id="btn-configuracion">Configuración</button>
-  <button id="btn-datosusuario">Datos de Usuario</button>
-  <button id="btn-generar">Generar</button>
-  <button id="btn-historial">Historial</button>
-  <button id="btn-cerrar">Cerrar</button>
+    <div class="inicio-grid">
+      <!-- Fila 1: solo el botón Crear en el centro -->
+      <div></div>
+      <div><button id="btn-crear">Crear Kilometraje</button></div>
+      <div></div>
+      <!-- Fila 2: Configuración, Datos de Usuario, Generar -->
+      <div><button id="btn-configuracion">Configuración</button></div>
+      <div><button id="btn-datosusuario">Datos de Usuario</button></div>
+  <div style="display:none;"><button id="btn-generar">Generar</button></div>
+      <!-- Fila 3: vacío, Historial, vacío -->
+      <div></div>
+      <div><button id="btn-historial">Historial</button></div>
+      <div></div>
+      <!-- Fila 4: solo el botón Cerrar en el centro -->
+      <div></div>
+      <div><button id="btn-cerrar">Cerrar</button></div>
+      <div></div>
+    </div>
   </div>
   <script src="../js/inicio.js"></script>
 </body>

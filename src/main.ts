@@ -1,12 +1,36 @@
+
+import * as fs from 'fs';
+import { app, BrowserWindow, ipcMain, dialog } from 'electron';
+import * as path from 'path';
 // ¡¡¡NO TOCAR!!!
 // TODOS LOS IMPORTS DEBEN IR AL PRINCIPIO DE ESTE ARCHIVO.
 // NO PONGAS NINGÚN CÓDIGO, HANDLER NI COMENTARIO ANTES DE LOS IMPORTS.
 // SI VES 'Cannot access ... before initialization', ES PORQUE HAY ALGO ANTES DE LOS IMPORTS.
 //
 // ⚠️ SCRCTV: ¡REVISA SIEMPRE ESTO ANTES DE GUARDAR! ⚠️
-import * as fs from 'fs';
-import { app, BrowserWindow, ipcMain, dialog } from 'electron';
-import * as path from 'path';
+
+// Guardar y recuperar la ruta de los DOCX (ahora 'ruta-meses-guardatos.json')
+ipcMain.handle('saveRutaDocx', async (event, ruta) => {
+  try {
+    const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+    if (!fs.existsSync(configDir)) fs.mkdirSync(configDir, { recursive: true });
+    const rutaFile = path.join(configDir, 'ruta-meses-guardatos.json');
+    fs.writeFileSync(rutaFile, JSON.stringify({ ruta }, null, 2), 'utf-8');
+    return true;
+  } catch (e) {
+    return false;
+  }
+});
+ipcMain.handle('getRutaDocx', async () => {
+  try {
+    const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+    const rutaFile = path.join(configDir, 'ruta-meses-guardatos.json');
+    if (!fs.existsSync(rutaFile)) return null;
+    return JSON.parse(fs.readFileSync(rutaFile, 'utf-8')).ruta;
+  } catch (e) {
+    return null;
+  }
+});
 
 // Cerrar ventana datosusuario
 ipcMain.on('cerrar-ventana-datosusuario', () => {
@@ -188,7 +212,18 @@ ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuario, rutaPlan
       return { ok: false, msg: 'Error al procesar la plantilla: ' + (error && error.message ? error.message : String(error)) };
     }
     const buf = doc.getZip().generate({ type: 'nodebuffer' });
-    const carpeta = path.dirname(rutaTurnos);
+    // Usar la ruta de DOCX si existe, si no, usar la carpeta de los turnos
+    let carpeta = path.dirname(rutaTurnos);
+    try {
+      const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+      const rutaDocxFile = path.join(configDir, 'ruta-meses-guardatos.json');
+      if (fs.existsSync(rutaDocxFile)) {
+        const rutaDocx = JSON.parse(fs.readFileSync(rutaDocxFile, 'utf-8')).ruta;
+        if (rutaDocx && fs.existsSync(rutaDocx)) {
+          carpeta = rutaDocx;
+        }
+      }
+    } catch (e) { /* Si falla, usa carpeta por defecto */ }
     // Obtener año y mes para el nombre del archivo
     let nombreMes = '';
     if (Array.isArray(meses) && meses.length > 0) {

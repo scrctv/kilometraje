@@ -1,18 +1,14 @@
 [
   {
     "fecha": "01-08-2025",
-    "turno": "mañana"
-  },
-  {
-    "fecha": "02-08-2025",
-    "turno": "mañana"
-  },
-  {
-    "fecha": "03-08-2025",
     "turno": "tarde"
   },
   {
-    "fecha": "04-08-2025",
+    "fecha": "02-08-2025",
+    "turno": "tarde"
+  },
+  {
+    "fecha": "09-08-2025",
     "turno": "tarde"
   }
 ]

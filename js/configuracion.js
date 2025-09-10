@@ -87,6 +87,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Selección carpeta DOCX
+  const btnDocx = document.getElementById('btn-docx');
+  btnDocx?.addEventListener('click', async () => {
+    try {
+      if (window.electronAPI?.openFolder) {
+        const folderPath = await window.electronAPI.openFolder();
+        if (folderPath) {
+          document.getElementById('docx-path').value = folderPath;
+          if (window.electronAPI?.saveRutaDocx) {
+            await window.electronAPI.saveRutaDocx(folderPath);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Error al seleccionar carpeta DOCX:', error);
+    }
+  });
+
   // Mostrar rutas guardadas al cargar
   (async () => {
     if (window.electronAPI?.getRutaDotx) {
@@ -99,6 +117,12 @@ document.addEventListener('DOMContentLoaded', () => {
       const rutaDestino = await window.electronAPI.getRutaDestino();
       if (rutaDestino) {
         document.getElementById('destino-path').value = rutaDestino;
+      }
+    }
+    if (window.electronAPI?.getRutaDocx) {
+      const rutaDocx = await window.electronAPI.getRutaDocx();
+      if (rutaDocx) {
+        document.getElementById('docx-path').value = rutaDocx;
       }
     }
   })();

@@ -297,11 +297,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Botón abrir carpeta destino
+  // Botón abrir carpeta DOCX (ruta-meses-guardatos.json)
   const btnAbrirCarpeta = document.getElementById('btn-abrir-carpeta');
   btnAbrirCarpeta.addEventListener('click', async () => {
-    if (window.electronAPI?.getRutaDestino) {
-      const ruta = await window.electronAPI.getRutaDestino();
+    if (window.electronAPI?.getRutaDocx) {
+      const ruta = await window.electronAPI.getRutaDocx();
       if (ruta) {
         window.electronAPI?.abrirEnFinder?.(ruta);
       }
