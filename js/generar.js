@@ -137,8 +137,12 @@ document.addEventListener('DOMContentLoaded', () => {
   btnGenerar.addEventListener('click', async () => {
     const rutaUsuario = inputUsuario.value;
     const rutaPlantilla = inputPlantilla.value;
-    if (!rutaUsuario || !rutaPlantilla) {
-      mostrarModalMensaje('Selecciona archivo de usuario y plantilla.', 'info');
+    if (!rutaUsuario) {
+      mostrarModalMensaje('NO EXISTE, el archivo con los datos de Usuario, rellena el formulario en la ventana DATOS DE USUARIO, y guardalo.', 'error');
+      return;
+    }
+    if (!rutaPlantilla) {
+      mostrarModalMensaje('Selecciona archivo de plantilla.', 'info');
       return;
     }
     if (mesesSeleccionados.length === 0) {
@@ -177,7 +181,11 @@ document.addEventListener('DOMContentLoaded', () => {
       if (resultado.ok) {
         mostrarModalMensaje('Documento generado correctamente: ' + resultado.nombre, 'success');
       } else {
-        mostrarModalMensaje('Error: ' + resultado.msg, 'error');
+        if (resultado.msg && resultado.msg.toLowerCase().includes('datos de usuario')) {
+          mostrarModalMensaje('NO EXISTE, el archivo con los datos de Usuario, rellena el formulario en la ventana DATOS DE USUARIO, y guardalo.', 'error');
+        } else {
+          mostrarModalMensaje('Error: ' + resultado.msg, 'error');
+        }
       }
     } catch (error) {
       mostrarModalMensaje('Error al cargar datos de turnos: ' + error.message, 'error');

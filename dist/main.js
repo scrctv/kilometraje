@@ -112,6 +112,9 @@ electron_1.ipcMain.handle('get-turnos', async () => {
 electron_1.ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuario, rutaPlantilla, anio, meses }) => {
     try {
         // Cargar datos de usuario y turnos
+        if (!fs.existsSync(rutaUsuario)) {
+            return { ok: false, msg: 'NO EXISTE, el archivo con los datos de Usuario, rellena el formulario en la ventana DATOS DE USUARIO, y guardalo.' };
+        }
         const datosUsuario = JSON.parse(fs.readFileSync(rutaUsuario, 'utf-8'));
         let apuntes = JSON.parse(fs.readFileSync(rutaTurnos, 'utf-8'));
         // Filtrar por año y meses si se reciben
@@ -242,6 +245,10 @@ electron_1.ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuari
         return { ok: true, nombre: rutaSalida };
     }
     catch (err) {
+        // Si el error es ENOENT y la ruta es datosusuario.json, mostrar mensaje personalizado
+        if (err && err.code === 'ENOENT' && String(err.message).toLowerCase().includes('datosusuario')) {
+            return { ok: false, msg: 'NO EXISTE, el archivo con los datos de Usuario, rellena el formulario en la ventana DATOS DE USUARIO, y guardalo.' };
+        }
         return { ok: false, msg: err && err.message ? err.message : String(err) };
     }
 });
