@@ -399,11 +399,17 @@ electron_1.ipcMain.on('open-generar-window', () => {
 });
 // Handler para abrir la ventana CONFIGURACION con tamaño igual a datosusuario/crear
 electron_1.ipcMain.on('open-configuracion-window', () => {
+    // Verificar si ya existe una ventana de configuración
+    const existingWindow = electron_1.BrowserWindow.getAllWindows().find(win => win.getTitle && win.getTitle() === 'Configuración');
+    if (existingWindow) {
+        existingWindow.focus();
+        return;
+    }
     const configWin = new electron_1.BrowserWindow({
-        width: 1470,
+        width: 840,
         height: 760,
-        minWidth: 1470,
-        minHeight: 760,
+        resizable: false,
+        title: 'Configuración',
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,
@@ -584,8 +590,8 @@ electron_1.ipcMain.handle('get-ruta-destino', async () => {
 });
 function createWindow() {
     const win = new electron_1.BrowserWindow({
-        width: 800,
-        height: 600,
+        width: 840,
+        height: 760,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,
@@ -595,9 +601,17 @@ function createWindow() {
     win.loadFile(path.join(__dirname, '../html/inicio.html'));
 }
 function createConfigWindow() {
+    // Verificar si ya existe una ventana de configuración
+    const existingWindow = electron_1.BrowserWindow.getAllWindows().find(win => win.getTitle && win.getTitle() === 'Configuración');
+    if (existingWindow) {
+        existingWindow.focus();
+        return;
+    }
     const configWin = new electron_1.BrowserWindow({
-        width: 500,
-        height: 400,
+        width: 840,
+        height: 760,
+        resizable: false,
+        title: 'Configuración',
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,

@@ -376,11 +376,20 @@ ipcMain.on('open-generar-window', () => {
 
 // Handler para abrir la ventana CONFIGURACION con tamaño igual a datosusuario/crear
 ipcMain.on('open-configuracion-window', () => {
+  // Verificar si ya existe una ventana de configuración
+  const existingWindow = BrowserWindow.getAllWindows().find(win => 
+    win.getTitle && win.getTitle() === 'Configuración'
+  );
+  if (existingWindow) {
+    existingWindow.focus();
+    return;
+  }
+  
   const configWin = new BrowserWindow({
-    width: 1470,
+    width: 840,
     height: 760,
-    minWidth: 1470,
-    minHeight: 760,
+    resizable: false,
+    title: 'Configuración',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -558,8 +567,8 @@ ipcMain.handle('get-ruta-destino', async () => {
 
 function createWindow() {
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 840,
+    height: 760,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -570,9 +579,20 @@ function createWindow() {
 }
 
 function createConfigWindow() {
+  // Verificar si ya existe una ventana de configuración
+  const existingWindow = BrowserWindow.getAllWindows().find(win => 
+    win.getTitle && win.getTitle() === 'Configuración'
+  );
+  if (existingWindow) {
+    existingWindow.focus();
+    return;
+  }
+  
   const configWin = new BrowserWindow({
-    width: 500,
-    height: 400,
+    width: 840,
+    height: 760,
+    resizable: false,
+    title: 'Configuración',
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,

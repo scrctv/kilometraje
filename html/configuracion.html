@@ -3,71 +3,74 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=400, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Configuración</title>
   <link rel="stylesheet" href="../estilos/configuracion.css">
   <link rel="stylesheet" href="../estilos/fragment_guardado.css">
 </head>
 <body>
-  <div class="tabs">
-    <button class="tab-btn active" data-tab="guardado">Direcciónes de guardado</button>
-    <button class="tab-btn" data-tab="kilometraje">Kilometraje</button>
-    <button class="tab-btn" data-tab="turnos">TURNOS</button>
-  </div>
-  <div class="tab-content" id="guardado">
-    <h2>Direcciónes de Guardado</h2>
-    <div class="seccion">
-      <h3>Dirección donde se guarda la plantilla</h3>
-      <div class="input-group">
-        <input type="text" id="original-path" readonly placeholder="Selecciona la plantilla Excel...">
-        <button id="btn-original">Seleccionar archivo</button>
-      </div>
+  <div class="container">
+    <h1 class="titulo-inicio">CONFIGURACIÓN</h1>
+    <div class="tabs">
+      <button class="tab-btn active" data-tab="guardado">Direcciónes de guardado</button>
+      <button class="tab-btn" data-tab="kilometraje">Kilometraje</button>
+      <button class="tab-btn" data-tab="turnos">TURNOS</button>
     </div>
-    <div class="seccion">
-      <h3>Dirección donde guardar los archivos generados</h3>
-      <div class="input-group">
-        <input type="text" id="destino-path" readonly placeholder="Selecciona la carpeta de destino...">
-        <button id="btn-destino">Seleccionar carpeta</button>
-      </div>
-    </div>
-    <div class="seccion">
-      <h3>Carpeta para guardar los archivos DOCX</h3>
-      <div class="input-group">
-        <input type="text" id="docx-path" readonly placeholder="Selecciona la carpeta para los DOCX...">
-        <button id="btn-docx">Seleccionar carpeta</button>
-      </div>
-    </div>
-  </div>
-  <div class="tab-content hidden" id="kilometraje">
-    <h2>Kilometraje</h2>
-    <div class="seccion">
-      <label for="unidad-km">UNIDAD POR KM</label>
-      <input type="number" id="unidad-km" name="unidad-km" min="0" max="999.999" step="0.001" maxlength="7" placeholder="Ej: 1.234" inputmode="decimal">
-      <small>Hasta 3 cifras y 3 decimales</small>
-      <button id="btn-guardar-km">Guardar</button>
-    </div>
-  </div>
-  <div class="tab-content hidden" id="turnos">
-    <h2>Turnos de trabajo</h2>
-    <form id="form-turnos">
+    <div class="tab-content" id="guardado">
+      <h2>Direcciónes de Guardado</h2>
       <div class="seccion">
-        <label for="manana_inicio">TURNO DE MAÑANA</label>
-        <input type="time" id="manana_inicio" name="manana_inicio"> a
-        <input type="time" id="manana_fin" name="manana_fin">
+        <h3>Dirección donde se guarda la plantilla</h3>
+        <div class="input-group">
+          <input type="text" id="original-path" readonly placeholder="Selecciona la plantilla Excel...">
+          <button id="btn-original">Seleccionar archivo</button>
+        </div>
       </div>
       <div class="seccion">
-        <label for="tarde_inicio">TURNO DE TARDE</label>
-        <input type="time" id="tarde_inicio" name="tarde_inicio"> a
-        <input type="time" id="tarde_fin" name="tarde_fin">
+        <h3>Dirección donde guardar los archivos generados</h3>
+        <div class="input-group">
+          <input type="text" id="destino-path" readonly placeholder="Selecciona la carpeta de destino...">
+          <button id="btn-destino">Seleccionar carpeta</button>
+        </div>
       </div>
       <div class="seccion">
-        <label for="noche_inicio">TURNO DE NOCHE</label>
-        <input type="time" id="noche_inicio" name="noche_inicio"> a
-        <input type="time" id="noche_fin" name="noche_fin">
+        <h3>Carpeta para guardar los archivos DOCX</h3>
+        <div class="input-group">
+          <input type="text" id="docx-path" readonly placeholder="Selecciona la carpeta para los DOCX...">
+          <button id="btn-docx">Seleccionar carpeta</button>
+        </div>
       </div>
-      <button type="submit">Guardar turnos</button>
-    </form>
-    <div id="mensaje-turnos" class="mensaje-resultado"></div>
+    </div>
+    <div class="tab-content hidden" id="kilometraje">
+      <h2>Kilometraje</h2>
+      <div class="seccion">
+        <label for="unidad-km">UNIDAD POR KM</label>
+        <input type="number" id="unidad-km" name="unidad-km" min="0" max="999.999" step="0.001" maxlength="7" placeholder="Ej: 1.234" inputmode="decimal">
+        <small>Hasta 3 cifras y 3 decimales</small>
+        <button id="btn-guardar-km">Guardar</button>
+      </div>
+    </div>
+    <div class="tab-content hidden" id="turnos">
+      <h2>Turnos de trabajo</h2>
+      <form id="form-turnos">
+        <div class="seccion">
+          <label for="manana_inicio">TURNO DE MAÑANA</label>
+          <input type="time" id="manana_inicio" name="manana_inicio"> a
+          <input type="time" id="manana_fin" name="manana_fin">
+        </div>
+        <div class="seccion">
+          <label for="tarde_inicio">TURNO DE TARDE</label>
+          <input type="time" id="tarde_inicio" name="tarde_inicio"> a
+          <input type="time" id="tarde_fin" name="tarde_fin">
+        </div>
+        <div class="seccion">
+          <label for="noche_inicio">TURNO DE NOCHE</label>
+          <input type="time" id="noche_inicio" name="noche_inicio"> a
+          <input type="time" id="noche_fin" name="noche_fin">
+        </div>
+        <button type="submit">Guardar turnos</button>
+      </form>
+      <div id="mensaje-turnos" class="mensaje-resultado"></div>
+    </div>
   </div>
   <script src="../js/configuracion.js"></script>
 </body>
