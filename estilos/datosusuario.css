@@ -71,17 +71,17 @@ label {
   font-size: 0.9rem;
 }
 
-/* Input styling */
+/* Input styling - más compacto */
 input[type="text"],
 input[type="number"],
 textarea {
   width: 100%;
-  padding: 8px 12px;
+  padding: 6px 10px;
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 4px;
   background: rgba(255, 255, 255, 0.05);
   color: white;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   transition: all 0.3s ease;
   box-sizing: border-box;
 }
