@@ -1,110 +1,258 @@
-.form-usuario textarea {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
-  font-family: inherit;
-  resize: vertical;
-  box-sizing: border-box;
-  width: 100%;
-  margin-bottom: 8px;
-}
-/* Bloques visuales para cada sección de datos */
-.bloque-datos {
-  background: #f7fafd;
-  border-radius: 14px;
-  box-shadow: 0 2px 8px rgba(30,60,120,0.06);
-  margin-bottom: 28px;
-  padding: 18px 24px 10px 24px;
-}
-.bloque-a {
-  background: #e3eafc;
-}
-.bloque-b {
-  background: #f0f4ff;
-}
-.bloque-c {
-  background: #e8f0fe;
-}
+/* Base styling following the unified pattern */
 body {
-  background: #e3eafc;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #232526 0%, #414345 100%);
+  color: white;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
-.campo-linea {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 8px;
+
+/* Container following the unified pattern */
+.container {
+  max-width: 820px;
+  max-height: 700px;
+  margin: 40px auto;
+  padding: 30px;
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  overflow-y: auto;
 }
-.form-usuario fieldset:first-of-type label,
-.form-usuario fieldset:first-of-type input {
-  display: block;
-  width: 100%;
+
+/* Title following the unified pattern */
+.titulo-inicio {
+  font-size: 2rem;
+  font-weight: 300;
+  text-align: center;
+  margin: 0 0 30px 0;
+  color: white;
+  letter-spacing: 2px;
 }
-.form-usuario fieldset:first-of-type label {
-  margin-top: 10px;
-  margin-bottom: 2px;
+
+/* Form content wrapper */
+.form-content {
+  margin-bottom: 20px;
 }
-.form-usuario fieldset:first-of-type input {
-  margin-bottom: 4px;
-}
-.form-usuario fieldset {
-  border: 1px solid #bbb;
-  border-radius: 6px;
-  margin-bottom: 18px;
-  padding: 12px 16px 10px 16px;
-}
-.form-usuario legend {
-  font-weight: bold;
-  color: #1976d2;
-  margin-bottom: 8px;
-  font-size: 1.08em;
-}
-.checks-group {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px 18px;
-  margin-bottom: 10px;
-  justify-content: flex-start;
-  align-items: flex-start;
-}
-.checks-group label {
-  font-weight: normal;
-  display: flex;
-  align-items: left;
-  gap: 1.5px;
-}
+
+/* Form styling */
 .form-usuario {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 24px;
-  background: #fff;
+  gap: 20px;
+}
+
+/* Fieldset styling */
+fieldset {
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
-  width: 900px;
-  max-width: 900px;
-  min-width: 400px;
-  margin: 0 auto;
+  padding: 20px;
+  margin: 0;
+  background: rgba(255, 255, 255, 0.02);
 }
-.form-usuario label {
+
+legend {
+  color: #00d4ff;
   font-weight: 500;
-}
-.form-usuario input {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 1rem;
-}
-.form-usuario button {
-  margin-top: 16px;
-  padding: 10px 0;
-  background: #1976d2;
-  color: #fff;
-  border: none;
-  border-radius: 4px;
+  padding: 0 10px;
   font-size: 1.1rem;
-  cursor: pointer;
-  transition: background 0.2s;
 }
-.form-usuario button:hover {
-  background: #1565c0;
+
+/* Label styling */
+label {
+  display: block;
+  margin: 10px 0 5px 0;
+  color: #e0e0e0;
+  font-weight: 400;
+  font-size: 0.9rem;
+}
+
+/* Input styling */
+input[type="text"],
+input[type="number"],
+textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus {
+  outline: none;
+  border-color: #00d4ff;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 2px rgba(0, 212, 255, 0.2);
+}
+
+/* Textarea specific styling */
+textarea {
+  resize: vertical;
+  min-height: 60px;
+}
+
+/* Checkbox and radio styling */
+.checks-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin: 15px 0;
+}
+
+.checks-group label {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.checks-group input[type="checkbox"],
+.checks-group input[type="radio"] {
+  width: auto;
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+/* Radio group styling */
+.radio-group {
+  margin: 15px 0;
+}
+
+.radio-group span {
+  display: block;
+  color: #e0e0e0;
+  font-weight: 400;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.radio-options {
+  display: flex;
+  gap: 20px;
+}
+
+.radio-options label {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  cursor: pointer;
+}
+
+.radio-options input[type="radio"] {
+  width: auto;
+  margin-right: 8px;
+  cursor: pointer;
+}
+
+/* Campo linea for inline fields */
+.campo-linea {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  margin: 10px 0;
+}
+
+.campo-linea label {
+  min-width: 120px;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.campo-linea input {
+  flex: 1;
+}
+
+/* Primary button styling */
+.btn-primary {
+  background: linear-gradient(135deg, #00d4ff 0%, #0099cc 100%);
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin: 20px auto;
+  display: block;
+  min-width: 120px;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(0, 212, 255, 0.4);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+/* Buttons container following the unified pattern */
+.buttons {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Secondary button styling following the unified pattern */
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-secondary:active {
+  transform: translateY(0);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .container {
+    margin: 20px;
+    padding: 20px;
+    max-width: none;
+  }
+  
+  .titulo-inicio {
+    font-size: 1.5rem;
+  }
+  
+  .campo-linea {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .campo-linea label {
+    min-width: auto;
+  }
+  
+  .checks-group {
+    flex-direction: column;
+    gap: 10px;
+  }
 }

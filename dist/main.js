@@ -528,11 +528,17 @@ electron_1.ipcMain.on('open-crear-window', () => {
     crearWin.loadFile(path.join(__dirname, '../html/crear.html'));
 });
 electron_1.ipcMain.on('open-datosusuario-window', () => {
+    // Verificar si ya existe una ventana de datosusuario
+    const existingWindow = electron_1.BrowserWindow.getAllWindows().find(win => win.getTitle && win.getTitle() === 'Datos de Usuario');
+    if (existingWindow) {
+        existingWindow.focus();
+        return;
+    }
     const datosWin = new electron_1.BrowserWindow({
-        width: 1470,
+        width: 840,
         height: 760,
-        minWidth: 1470,
-        minHeight: 760,
+        resizable: false,
+        title: 'Datos de Usuario',
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
             contextIsolation: true,

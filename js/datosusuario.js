@@ -201,3 +201,10 @@ document.getElementById('form-usuario')?.addEventListener('submit', async functi
     }
   }
 });
+
+// Botón cerrar ventana
+if (document.getElementById('btn-cerrar')) {
+  document.getElementById('btn-cerrar').addEventListener('click', () => {
+    window.close();
+  });
+}
