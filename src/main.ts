@@ -9,6 +9,13 @@ import * as path from 'path';
 //
 // ⚠️ SCRCTV: ¡REVISA SIEMPRE ESTO ANTES DE GUARDAR! ⚠️
 
+// Función helper para normalizar rutas
+function normalizarRuta(ruta: string): string {
+  if (!ruta) return '';
+  // Convertir separadores a los del SO actual
+  return path.normalize(ruta.replace(/[\/\\]/g, path.sep));
+}
+
 // ==================== HANDLERS DEL HISTORIAL ====================
 
 // Abrir ventana historial
@@ -140,8 +147,10 @@ ipcMain.handle('saveRutaDocx', async (event, ruta) => {
   try {
     const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
     if (!fs.existsSync(configDir)) fs.mkdirSync(configDir, { recursive: true });
+    
+    const rutaNormalizada = normalizarRuta(ruta);
     const rutaFile = path.join(configDir, 'ruta-meses-guardatos.json');
-    fs.writeFileSync(rutaFile, JSON.stringify({ ruta }, null, 2), 'utf-8');
+    fs.writeFileSync(rutaFile, JSON.stringify({ ruta: rutaNormalizada }, null, 2), 'utf-8');
     return true;
   } catch (e) {
     return false;
@@ -176,8 +185,10 @@ ipcMain.handle('save-ruta-datosusuario', async (event, ruta) => {
   try {
     const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
     if (!fs.existsSync(configDir)) fs.mkdirSync(configDir, { recursive: true });
+    
+    const rutaNormalizada = normalizarRuta(ruta);
     const rutaFile = path.join(configDir, 'ruta-datosusuario.json');
-    fs.writeFileSync(rutaFile, JSON.stringify({ ruta }, null, 2), 'utf-8');
+    fs.writeFileSync(rutaFile, JSON.stringify({ ruta: rutaNormalizada }, null, 2), 'utf-8');
     return true;
   } catch (e) {
     return false;
@@ -223,10 +234,25 @@ ipcMain.handle('get-turnos', async () => {
 // Eliminado handler duplicado de 'generar-docx' (solo debe haber uno)
 ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuario, rutaPlantilla, anio, meses }) => {
   try {
-    // Cargar datos de usuario y turnos
+    // Normalizar todas las rutas
+    rutaUsuario = normalizarRuta(rutaUsuario);
+    rutaPlantilla = normalizarRuta(rutaPlantilla);
+    rutaTurnos = normalizarRuta(rutaTurnos);
+    
+    // Verificar que los archivos existen
     if (!fs.existsSync(rutaUsuario)) {
       return { ok: false, msg: 'NO EXISTE, el archivo con los datos de Usuario, rellena el formulario en la ventana DATOS DE USUARIO, y guardalo.' };
     }
+    
+    if (!fs.existsSync(rutaPlantilla)) {
+      return { ok: false, msg: `El archivo de plantilla no existe: ${rutaPlantilla}` };
+    }
+    
+    if (!fs.existsSync(rutaTurnos)) {
+      return { ok: false, msg: `El archivo de turnos no existe: ${rutaTurnos}` };
+    }
+    
+    // Cargar datos de usuario y turnos
     const datosUsuario = JSON.parse(fs.readFileSync(rutaUsuario, 'utf-8'));
     let apuntes: { fecha: string; turno: string }[] = JSON.parse(fs.readFileSync(rutaTurnos, 'utf-8'));
     // Filtrar por año y meses si se reciben
@@ -340,16 +366,22 @@ ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuario, rutaPlan
     const buf = doc.getZip().generate({ type: 'nodebuffer' });
     // Usar la ruta de DOCX si existe, si no, usar la carpeta de los turnos
     let carpeta = path.dirname(rutaTurnos);
+    
     try {
       const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
       const rutaDocxFile = path.join(configDir, 'ruta-meses-guardatos.json');
+      
       if (fs.existsSync(rutaDocxFile)) {
-        const rutaDocx = JSON.parse(fs.readFileSync(rutaDocxFile, 'utf-8')).ruta;
+        const rutaDocxData = JSON.parse(fs.readFileSync(rutaDocxFile, 'utf-8'));
+        const rutaDocx = normalizarRuta(rutaDocxData.ruta);
+        
         if (rutaDocx && fs.existsSync(rutaDocx)) {
           carpeta = rutaDocx;
         }
       }
-    } catch (e) { /* Si falla, usa carpeta por defecto */ }
+    } catch (e) { 
+      /* Si falla, usa carpeta por defecto */ 
+    }
     // Obtener año y mes para el nombre del archivo
     let nombreMes = '';
     if (Array.isArray(meses) && meses.length > 0) {
@@ -453,18 +485,36 @@ ipcMain.handle('leer-turnos-mes', async (event, mes, anio) => {
   try {
     const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
     const rutaDestinoPath = path.join(configDir, 'ruta-destino.json');
-    if (!fs.existsSync(rutaDestinoPath)) return { ok: false, msg: 'No se ha configurado la ruta de destino.' };
-    const rutaDestino = JSON.parse(fs.readFileSync(rutaDestinoPath, 'utf-8')).rutaDestino;
+    
+    if (!fs.existsSync(rutaDestinoPath)) {
+      return { ok: false, msg: 'No se ha configurado la ruta de destino.' };
+    }
+    
+    const rutaDestinoData = JSON.parse(fs.readFileSync(rutaDestinoPath, 'utf-8'));
+    const rutaDestino = normalizarRuta(rutaDestinoData.rutaDestino);
+    
     if (!rutaDestino) return { ok: false, msg: 'Ruta de destino no válida.' };
+    
     const mesNombre = mes.toLowerCase();
     const carpetaAnio = path.join(rutaDestino, anio.toString());
-    if (!fs.existsSync(carpetaAnio)) return { ok: false, msg: 'No existe la carpeta del año.' };
+    
+    if (!fs.existsSync(carpetaAnio)) {
+      return { ok: false, msg: 'No existe la carpeta del año.' };
+    }
+    
     // Buscar cualquier archivo que contenga el nombre del mes y termine en .json
-    const archivos = fs.readdirSync(carpetaAnio).filter(f => f.toLowerCase().includes(mesNombre) && f.endsWith('.json'));
-    if (archivos.length === 0) return { ok: false, msg: 'No hay datos para este mes.' };
+    const archivos = fs.readdirSync(carpetaAnio).filter(f => 
+      f.toLowerCase().includes(mesNombre) && f.endsWith('.json')
+    );
+    
+    if (archivos.length === 0) {
+      return { ok: false, msg: 'No hay datos para este mes.' };
+    }
+    
     // Tomar el primero que coincida
     const archivoFinal = path.join(carpetaAnio, archivos[0]);
     const datos = JSON.parse(fs.readFileSync(archivoFinal, 'utf-8'));
+    
     return { ok: true, datos };
   } catch (e: any) {
     return { ok: false, msg: 'Error al leer: ' + (e.message || e) };
@@ -476,15 +526,35 @@ ipcMain.handle('guardar-turnos', async (event, data, mes, anio) => {
   try {
     const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
     const rutaDestinoPath = path.join(configDir, 'ruta-destino.json');
-    if (!fs.existsSync(rutaDestinoPath)) return { ok: false, msg: 'No se ha configurado la ruta de destino.' };
-    const rutaDestino = JSON.parse(fs.readFileSync(rutaDestinoPath, 'utf-8')).rutaDestino;
-    if (!rutaDestino) return { ok: false, msg: 'Ruta de destino no válida.' };
+    
+    if (!fs.existsSync(rutaDestinoPath)) {
+      return { ok: false, msg: 'No se ha configurado la ruta de destino.' };
+    }
+    
+    const rutaDestinoData = JSON.parse(fs.readFileSync(rutaDestinoPath, 'utf-8'));
+    const rutaDestino = normalizarRuta(rutaDestinoData.rutaDestino);
+    
+    if (!rutaDestino) {
+      return { ok: false, msg: 'Ruta de destino no válida.' };
+    }
+    
+    // Verificar que la ruta existe
+    if (!fs.existsSync(rutaDestino)) {
+      return { ok: false, msg: `La ruta de destino no existe: ${rutaDestino}` };
+    }
+    
     const mesNombre = mes.toLowerCase();
     const carpetaAnio = path.join(rutaDestino, anio.toString());
-    if (!fs.existsSync(carpetaAnio)) fs.mkdirSync(carpetaAnio, { recursive: true });
+    
+    if (!fs.existsSync(carpetaAnio)) {
+      fs.mkdirSync(carpetaAnio, { recursive: true });
+    }
+    
     let nombreBase = `${mesNombre}-${anio}-km.json`;
     let archivoFinal = path.join(carpetaAnio, nombreBase);
+    
     fs.writeFileSync(archivoFinal, JSON.stringify(data, null, 2), 'utf-8');
+    
     return { ok: true, msg: `Guardado en ${archivoFinal}`, ruta: archivoFinal };
   } catch (e: any) {
     return { ok: false, msg: 'Error al guardar: ' + e.message };
@@ -513,9 +583,9 @@ ipcMain.on('cerrar-ventana-crear', () => {
 ipcMain.on('open-crear-window', () => {
   const crearWin = new BrowserWindow({
     width: 1470,
-    height: 760,
+    height: 950,
     minWidth: 1470,
-    minHeight: 760,
+    minHeight: 950,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -677,8 +747,10 @@ ipcMain.handle('dialog:openFolder', async () => {
         if (!fs.existsSync(configDir)) {
           fs.mkdirSync(configDir, { recursive: true });
         }
+        
+        const rutaNormalizada = normalizarRuta(ruta);
         const filePath = path.join(configDir, 'ruta-dotx.json');
-        fs.writeFileSync(filePath, JSON.stringify({ rutaDotx: ruta }, null, 2), 'utf-8');
+        fs.writeFileSync(filePath, JSON.stringify({ rutaDotx: rutaNormalizada }, null, 2), 'utf-8');
         return true;
       } catch (e) {
         return false;
@@ -691,8 +763,10 @@ ipcMain.handle('dialog:openFolder', async () => {
         if (!fs.existsSync(configDir)) {
           fs.mkdirSync(configDir, { recursive: true });
         }
+        
+        const rutaNormalizada = normalizarRuta(ruta);
         const filePath = path.join(configDir, 'ruta-destino.json');
-        fs.writeFileSync(filePath, JSON.stringify({ rutaDestino: ruta }, null, 2), 'utf-8');
+        fs.writeFileSync(filePath, JSON.stringify({ rutaDestino: rutaNormalizada }, null, 2), 'utf-8');
         return true;
       } catch (e) {
         return false;
@@ -726,6 +800,17 @@ ipcMain.handle('dialog:openFolder', async () => {
       return null;
     }
   });
+
+// Handler para validar rutas
+ipcMain.handle('validar-ruta', async (event, ruta) => {
+  try {
+    if (!ruta) return false;
+    const rutaNormalizada = normalizarRuta(ruta);
+    return fs.existsSync(rutaNormalizada);
+  } catch (e) {
+    return false;
+  }
+});
 
 app.whenReady().then(createWindow);
 

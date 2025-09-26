@@ -35,5 +35,7 @@ electron_1.contextBridge.exposeInMainWorld('electronAPI', {
     openHistorialWindow: () => electron_1.ipcRenderer.send('open-historial-window'),
     cerrarVentanaHistorial: () => electron_1.ipcRenderer.send('cerrar-ventana-historial'),
     getArchivosDocxPorAnio: (anio) => electron_1.ipcRenderer.invoke('get-archivos-docx-por-anio', anio),
-    abrirArchivoDocx: (nombreArchivo, anio) => electron_1.ipcRenderer.invoke('abrir-archivo-docx', nombreArchivo, anio)
+    abrirArchivoDocx: (nombreArchivo, anio) => electron_1.ipcRenderer.invoke('abrir-archivo-docx', nombreArchivo, anio),
+    // Función para validar rutas
+    validarRuta: (ruta) => electron_1.ipcRenderer.invoke('validar-ruta', ruta)
 });

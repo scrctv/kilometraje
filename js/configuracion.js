@@ -49,6 +49,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+// Función para validar rutas visualmente
+const validarRuta = async (inputId) => {
+  const input = document.getElementById(inputId);
+  if (!input || !input.value) return;
+  
+  try {
+    // Enviar la ruta al main process para validarla
+    const esValida = await window.electronAPI.validarRuta?.(input.value);
+    
+    if (esValida) {
+      input.style.borderColor = '#4caf50';
+      input.style.backgroundColor = '#f1f8e9';
+    } else {
+      input.style.borderColor = '#f44336';
+      input.style.backgroundColor = '#ffebee';
+    }
+  } catch (error) {
+    console.error('Error al validar ruta:', error);
+    input.style.borderColor = '#f44336';
+    input.style.backgroundColor = '#ffebee';
+  }
+};
+
 // Selección y guardado de rutas de plantilla dotx y carpeta de destino
 document.addEventListener('DOMContentLoaded', () => {
   // Selección archivo dotx/docx
@@ -62,6 +86,8 @@ document.addEventListener('DOMContentLoaded', () => {
           if (window.electronAPI?.saveRutaDotx) {
             await window.electronAPI.saveRutaDotx(filePath);
           }
+          // Validar la ruta después de seleccionarla
+          await validarRuta('original-path');
         }
       }
     } catch (error) {
@@ -80,6 +106,8 @@ document.addEventListener('DOMContentLoaded', () => {
           if (window.electronAPI?.saveRutaDestino) {
             await window.electronAPI.saveRutaDestino(folderPath);
           }
+          // Validar la ruta después de seleccionarla
+          await validarRuta('destino-path');
         }
       }
     } catch (error) {
@@ -98,6 +126,8 @@ document.addEventListener('DOMContentLoaded', () => {
           if (window.electronAPI?.saveRutaDocx) {
             await window.electronAPI.saveRutaDocx(folderPath);
           }
+          // Validar la ruta después de seleccionarla
+          await validarRuta('docx-path');
         }
       }
     } catch (error) {
@@ -111,18 +141,24 @@ document.addEventListener('DOMContentLoaded', () => {
       const rutaDotx = await window.electronAPI.getRutaDotx();
       if (rutaDotx) {
         document.getElementById('original-path').value = rutaDotx;
+        // Validar la ruta cargada
+        setTimeout(() => validarRuta('original-path'), 100);
       }
     }
     if (window.electronAPI?.getRutaDestino) {
       const rutaDestino = await window.electronAPI.getRutaDestino();
       if (rutaDestino) {
         document.getElementById('destino-path').value = rutaDestino;
+        // Validar la ruta cargada
+        setTimeout(() => validarRuta('destino-path'), 100);
       }
     }
     if (window.electronAPI?.getRutaDocx) {
       const rutaDocx = await window.electronAPI.getRutaDocx();
       if (rutaDocx) {
         document.getElementById('docx-path').value = rutaDocx;
+        // Validar la ruta cargada
+        setTimeout(() => validarRuta('docx-path'), 100);
       }
     }
   })();
