@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Guardar turnos
+  // Guardar turnos hhjhj
   const formTurnos = document.getElementById('form-turnos');
   if (formTurnos) {
     formTurnos.addEventListener('submit', async (e) => {
