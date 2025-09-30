@@ -42,12 +42,65 @@ const path = __importStar(require("path"));
 // SI VES 'Cannot access ... before initialization', ES PORQUE HAY ALGO ANTES DE LOS IMPORTS.
 //
 // ⚠️ SCRCTV: ¡REVISA SIEMPRE ESTO ANTES DE GUARDAR! ⚠️
-// Función helper para normalizar rutas
-function normalizarRuta(ruta) {
+// Función helper para normalizar rutas y crear carpetas si no existen
+function normalizarRuta(ruta, crearCarpeta = false) {
     if (!ruta)
         return '';
-    // Convertir separadores a los del SO actual
-    return path.normalize(ruta.replace(/[\/\\]/g, path.sep));
+    let rutaNormalizada = path.normalize(ruta.trim().replace(/[\/\\]/g, path.sep));
+    if (process.platform === 'win32' && rutaNormalizada.startsWith('/Users/')) {
+        const partes = rutaNormalizada.split(path.sep);
+        if (partes.length > 2) {
+            rutaNormalizada = `C:${path.sep}Users${path.sep}${partes[2]}${path.sep}${partes.slice(3).join(path.sep)}`;
+        }
+    }
+    if (crearCarpeta) {
+        try {
+            const dir = path.extname(rutaNormalizada) ? path.dirname(rutaNormalizada) : rutaNormalizada;
+            if (!fs.existsSync(dir))
+                fs.mkdirSync(dir, { recursive: true });
+        }
+        catch (e) {
+            console.error('No se pudo crear la carpeta para la ruta:', rutaNormalizada, e);
+        }
+    }
+    return rutaNormalizada;
+}
+// Inicializa la carpeta de configuración en la carpeta del ejecutable (.exe) y copia archivos base si no existen
+function inicializarConfiguracion() {
+    // Carpeta donde está el ejecutable (en producción y desarrollo)
+    const exeDir = path.dirname(process.execPath);
+    const baseConfigDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
+    // En desarrollo, los archivos base están en el proyecto; en producción, junto al exe
+    let origenConfigDir = path.join(__dirname, '../ARCHIVOS DE CONFIGURACION');
+    if (!fs.existsSync(origenConfigDir)) {
+        // Si no existe (ej: en producción), usar la misma carpeta destino
+        origenConfigDir = baseConfigDir;
+    }
+    if (!fs.existsSync(baseConfigDir)) {
+        fs.mkdirSync(baseConfigDir, { recursive: true });
+    }
+    // Copiar archivos base si no existen
+    if (fs.existsSync(origenConfigDir)) {
+        const archivos = fs.readdirSync(origenConfigDir);
+        archivos.forEach(nombre => {
+            const origen = path.join(origenConfigDir, nombre);
+            const destino = path.join(baseConfigDir, nombre);
+            if (!fs.existsSync(destino) && fs.statSync(origen).isFile()) {
+                fs.copyFileSync(origen, destino);
+            }
+        });
+    }
+}
+// Llamar a la inicialización al arrancar la app
+electron_1.app.whenReady().then(() => {
+    inicializarConfiguracion();
+    createWindow();
+});
+// Helper para buscar archivo de configuración SOLO en la carpeta del ejecutable
+function buscarArchivoConfig(nombreArchivo) {
+    const exeDir = path.dirname(process.execPath);
+    const ruta = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION', nombreArchivo);
+    return ruta;
 }
 // ==================== HANDLERS DEL HISTORIAL ====================
 // Abrir ventana historial
@@ -84,7 +137,8 @@ electron_1.ipcMain.on('cerrar-ventana-historial', () => {
 // Listar archivos DOCX por año
 electron_1.ipcMain.handle('get-archivos-docx-por-anio', async (event, anio) => {
     try {
-        const configDir = path.join(electron_1.app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+        const exeDir = path.dirname(process.execPath);
+        const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
         const rutaFile = path.join(configDir, 'ruta-meses-guardatos.json');
         if (!fs.existsSync(rutaFile)) {
             return [];
@@ -131,7 +185,8 @@ electron_1.ipcMain.handle('get-archivos-docx-por-anio', async (event, anio) => {
 // Abrir archivo DOCX
 electron_1.ipcMain.handle('abrir-archivo-docx', async (event, nombreArchivo, anio) => {
     try {
-        const configDir = path.join(electron_1.app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+        const exeDir = path.dirname(process.execPath);
+        const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
         const rutaFile = path.join(configDir, 'ruta-meses-guardatos.json');
         if (!fs.existsSync(rutaFile)) {
             return false;
@@ -157,10 +212,12 @@ electron_1.ipcMain.handle('abrir-archivo-docx', async (event, nombreArchivo, ani
 // Guardar y recuperar la ruta de los DOCX (ahora 'ruta-meses-guardatos.json')
 electron_1.ipcMain.handle('saveRutaDocx', async (event, ruta) => {
     try {
-        const configDir = path.join(electron_1.app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+        const exeDir = path.dirname(process.execPath);
+        const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
         if (!fs.existsSync(configDir))
             fs.mkdirSync(configDir, { recursive: true });
-        const rutaNormalizada = normalizarRuta(ruta);
+        // Normaliza y crea la carpeta destino si no existe
+        const rutaNormalizada = normalizarRuta(ruta, true);
         const rutaFile = path.join(configDir, 'ruta-meses-guardatos.json');
         fs.writeFileSync(rutaFile, JSON.stringify({ ruta: rutaNormalizada }, null, 2), 'utf-8');
         return true;
@@ -171,7 +228,8 @@ electron_1.ipcMain.handle('saveRutaDocx', async (event, ruta) => {
 });
 electron_1.ipcMain.handle('getRutaDocx', async () => {
     try {
-        const configDir = path.join(electron_1.app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+        const exeDir = path.dirname(process.execPath);
+        const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
         const rutaFile = path.join(configDir, 'ruta-meses-guardatos.json');
         if (!fs.existsSync(rutaFile))
             return null;
@@ -196,10 +254,12 @@ electron_1.ipcMain.on('cerrar-ventana-datosusuario', () => {
 // Guardar y recuperar la última ruta de datosusuario.json
 electron_1.ipcMain.handle('save-ruta-datosusuario', async (event, ruta) => {
     try {
-        const configDir = path.join(electron_1.app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+        const exeDir = path.dirname(process.execPath);
+        const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
         if (!fs.existsSync(configDir))
             fs.mkdirSync(configDir, { recursive: true });
-        const rutaNormalizada = normalizarRuta(ruta);
+        // Normaliza y crea la carpeta destino si no existe
+        const rutaNormalizada = normalizarRuta(ruta, true);
         const rutaFile = path.join(configDir, 'ruta-datosusuario.json');
         fs.writeFileSync(rutaFile, JSON.stringify({ ruta: rutaNormalizada }, null, 2), 'utf-8');
         return true;
@@ -210,7 +270,8 @@ electron_1.ipcMain.handle('save-ruta-datosusuario', async (event, ruta) => {
 });
 electron_1.ipcMain.handle('get-ruta-datosusuario', async () => {
     try {
-        const configDir = path.join(electron_1.app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+        const exeDir = path.dirname(process.execPath);
+        const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
         const rutaFile = path.join(configDir, 'ruta-datosusuario.json');
         if (!fs.existsSync(rutaFile))
             return null;
@@ -223,7 +284,8 @@ electron_1.ipcMain.handle('get-ruta-datosusuario', async () => {
 // Guardar turnos.json
 electron_1.ipcMain.handle('save-turnos', async (event, turnos) => {
     try {
-        const configDir = path.join(electron_1.app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+        const exeDir = path.dirname(process.execPath);
+        const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
         if (!fs.existsSync(configDir))
             fs.mkdirSync(configDir, { recursive: true });
         const ruta = path.join(configDir, 'turnos.json');
@@ -237,7 +299,8 @@ electron_1.ipcMain.handle('save-turnos', async (event, turnos) => {
 // Leer turnos.json
 electron_1.ipcMain.handle('get-turnos', async () => {
     try {
-        const configDir = path.join(electron_1.app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+        const exeDir = path.dirname(process.execPath);
+        const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
         const ruta = path.join(configDir, 'turnos.json');
         if (!fs.existsSync(ruta))
             return null;
@@ -251,10 +314,24 @@ electron_1.ipcMain.handle('get-turnos', async () => {
 // Eliminado handler duplicado de 'generar-docx' (solo debe haber uno)
 electron_1.ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuario, rutaPlantilla, anio, meses }) => {
     try {
-        // Normalizar todas las rutas
-        rutaUsuario = normalizarRuta(rutaUsuario);
+        // Unificar la obtención de la ruta de datosusuario.json
+        const rutaUsuarioReal = buscarArchivoConfig('datosusuario.json');
+        rutaUsuario = rutaUsuarioReal;
         rutaPlantilla = normalizarRuta(rutaPlantilla);
         rutaTurnos = normalizarRuta(rutaTurnos);
+        // Asegura que las carpetas de los archivos existen
+        [rutaUsuario, rutaPlantilla, rutaTurnos].forEach(r => {
+            if (r) {
+                try {
+                    const dir = path.extname(r) ? path.dirname(r) : r;
+                    if (!fs.existsSync(dir))
+                        fs.mkdirSync(dir, { recursive: true });
+                }
+                catch (e) {
+                    console.error('No se pudo crear la carpeta para', r, e);
+                }
+            }
+        });
         // Verificar que los archivos existen
         if (!fs.existsSync(rutaUsuario)) {
             return { ok: false, msg: 'NO EXISTE, el archivo con los datos de Usuario, rellena el formulario en la ventana DATOS DE USUARIO, y guardalo.' };
@@ -765,15 +842,18 @@ electron_1.ipcMain.handle('save-datos-usuario', async (event, data) => {
 });
 electron_1.ipcMain.handle('get-datos-usuario', async () => {
     try {
-        const configDir = path.join(electron_1.app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
-        const filePath = path.join(configDir, 'datosusuario.json');
-        if (fs.existsSync(filePath)) {
-            const data = fs.readFileSync(filePath, 'utf-8');
+        // Siempre buscar SOLO en la carpeta del ejecutable
+        const rutaUsuario = buscarArchivoConfig('datosusuario.json');
+        console.log('[get-datos-usuario] Buscando archivo en:', rutaUsuario);
+        console.log('[get-datos-usuario] Existe?', fs.existsSync(rutaUsuario));
+        if (fs.existsSync(rutaUsuario)) {
+            const data = fs.readFileSync(rutaUsuario, 'utf-8');
             return JSON.parse(data);
         }
         return null;
     }
     catch (e) {
+        console.error('[get-datos-usuario] Error:', e);
         return null;
     }
 });
@@ -789,7 +869,6 @@ electron_1.ipcMain.handle('validar-ruta', async (event, ruta) => {
         return false;
     }
 });
-electron_1.app.whenReady().then(createWindow);
 electron_1.app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         electron_1.app.quit();
