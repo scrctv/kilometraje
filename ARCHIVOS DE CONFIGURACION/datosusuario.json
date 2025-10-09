@@ -1,5 +1,5 @@
 {
-  "nif": "48382791Z",
+  "nif": "48382791Zzzz",
   "nom": "ÓSCAR OCTAVIO",
   "cognoms": "MUÑOZ FERNANDEZ",
   "grup": "",
@@ -24,8 +24,8 @@
   "marca": "MERCEDES",
   "matricula": "5100HPR",
   "peatge": "",
-  "pagament_si": "☐ SI",
-  "pagament_no": "☒ NO",
+  "pagament_si": "☐",
+  "pagament_no": "☒",
   "cargo1": "SUBINSPECTOR GRUPO",
   "nifcargo1": "22566493C",
   "nombrecargo1": "FRANCISCO JOSE CABRERA",

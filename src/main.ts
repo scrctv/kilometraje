@@ -35,26 +35,44 @@ function inicializarConfiguracion() {
   // Carpeta donde está el ejecutable (en producción y desarrollo)
   const exeDir = path.dirname(process.execPath);
   const baseConfigDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
+  
+  console.log('[INIT] Directorio del ejecutable:', exeDir);
+  console.log('[INIT] Carpeta de configuración destino:', baseConfigDir);
+  
   // En desarrollo, los archivos base están en el proyecto; en producción, junto al exe
   let origenConfigDir = path.join(__dirname, '../ARCHIVOS DE CONFIGURACION');
+  console.log('[INIT] Carpeta de configuración origen (desarrollo):', origenConfigDir);
+  
   if (!fs.existsSync(origenConfigDir)) {
     // Si no existe (ej: en producción), usar la misma carpeta destino
     origenConfigDir = baseConfigDir;
+    console.log('[INIT] Usando carpeta destino como origen (producción)');
   }
+  
   if (!fs.existsSync(baseConfigDir)) {
+    console.log('[INIT] Creando carpeta de configuración...');
     fs.mkdirSync(baseConfigDir, { recursive: true });
   }
+  
   // Copiar archivos base si no existen
   if (fs.existsSync(origenConfigDir)) {
     const archivos = fs.readdirSync(origenConfigDir);
+    console.log('[INIT] Archivos encontrados en origen:', archivos);
     archivos.forEach(nombre => {
       const origen = path.join(origenConfigDir, nombre);
       const destino = path.join(baseConfigDir, nombre);
       if (!fs.existsSync(destino) && fs.statSync(origen).isFile()) {
+        console.log('[INIT] Copiando archivo:', nombre);
         fs.copyFileSync(origen, destino);
+      } else {
+        console.log('[INIT] Archivo ya existe o no es válido:', nombre);
       }
     });
+  } else {
+    console.log('[INIT] Carpeta origen no existe:', origenConfigDir);
   }
+  
+  console.log('[INIT] Inicialización completada');
 }
 
 // Llamar a la inicialización al arrancar la app
@@ -68,6 +86,17 @@ function buscarArchivoConfig(nombreArchivo: string) {
   const exeDir = path.dirname(process.execPath);
   const ruta = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION', nombreArchivo);
   return ruta;
+}
+
+// Helper para obtener SIEMPRE la carpeta de configuración correcta
+function obtenerCarpetaConfiguracion(): string {
+  const exeDir = path.dirname(process.execPath);
+  const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
+  // Asegurar que la carpeta existe
+  if (!fs.existsSync(configDir)) {
+    fs.mkdirSync(configDir, { recursive: true });
+  }
+  return configDir;
 }
 
 // ==================== HANDLERS DEL HISTORIAL ====================
@@ -344,7 +373,8 @@ ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuario, rutaPlan
       anioAnterior = anioActual - 1;
     }
     // Buscar archivo de turnos del mes anterior
-    const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+    const exeDir = path.dirname(process.execPath);
+    const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
     const rutaDestinoPath = path.join(configDir, 'ruta-destino.json');
     const fechasHabiles: Date[] = [];
     
@@ -360,9 +390,9 @@ ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuario, rutaPlan
     // Leer horarios de turnos
     const turnosPath = path.join(configDir, 'turnos.json');
     const turnos = fs.existsSync(turnosPath) ? JSON.parse(fs.readFileSync(turnosPath, 'utf-8')) : {};
-    // Preparar campos para la plantilla (máximo 18 filas)
+    // Preparar campos para la plantilla (máximo 23 filas)
     const datosPlantilla: Record<string, string> = {};
-    const maxFilas = 18;
+    const maxFilas = 23;
     // Tomar los 3 últimos días hábiles (orden ascendente)
     const ultimos3 = fechasHabiles.slice(0,3).sort((a,b)=>a.getTime()-b.getTime());
     const mesesNombresLargos = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
@@ -438,7 +468,8 @@ ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuario, rutaPlan
     let carpeta = path.dirname(rutaTurnos);
     
     try {
-      const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+      const exeDir = path.dirname(process.execPath);
+      const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
       const rutaDocxFile = path.join(configDir, 'ruta-meses-guardatos.json');
       
       if (fs.existsSync(rutaDocxFile)) {
@@ -553,7 +584,8 @@ ipcMain.handle('abrir-en-finder', async (event, filePath) => {
 // Leer archivo de turnos para un mes y año
 ipcMain.handle('leer-turnos-mes', async (event, mes, anio) => {
   try {
-    const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+    const exeDir = path.dirname(process.execPath);
+    const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
     const rutaDestinoPath = path.join(configDir, 'ruta-destino.json');
     
     if (!fs.existsSync(rutaDestinoPath)) {
@@ -594,7 +626,8 @@ ipcMain.handle('leer-turnos-mes', async (event, mes, anio) => {
 // Guardar turnos seleccionados como JSON
 ipcMain.handle('guardar-turnos', async (event, data, mes, anio) => {
   try {
-    const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+    const exeDir = path.dirname(process.execPath);
+    const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
     const rutaDestinoPath = path.join(configDir, 'ruta-destino.json');
     
     if (!fs.existsSync(rutaDestinoPath)) {
@@ -690,7 +723,8 @@ ipcMain.on('open-datosusuario-window', () => {
 
 ipcMain.handle('get-unidad-por-km', async () => {
   try {
-    const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+    const exeDir = path.dirname(process.execPath);
+    const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
     const filePath = path.join(configDir, 'unidad-por-km.json');
     if (fs.existsSync(filePath)) {
       const data = fs.readFileSync(filePath, 'utf-8');
@@ -706,7 +740,8 @@ ipcMain.handle('get-unidad-por-km', async () => {
 // Handler para obtener la ruta de plantilla guardada
 ipcMain.handle('get-ruta-dotx', async () => {
   try {
-    const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+    const exeDir = path.dirname(process.execPath);
+    const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
     const filePath = path.join(configDir, 'ruta-dotx.json');
     if (fs.existsSync(filePath)) {
       const data = fs.readFileSync(filePath, 'utf-8');
@@ -722,7 +757,8 @@ ipcMain.handle('get-ruta-dotx', async () => {
 // Handler para obtener la ruta de destino guardada
 ipcMain.handle('get-ruta-destino', async () => {
   try {
-    const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+    const exeDir = path.dirname(process.execPath);
+    const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
     const filePath = path.join(configDir, 'ruta-destino.json');
     if (fs.existsSync(filePath)) {
       const data = fs.readFileSync(filePath, 'utf-8');
@@ -799,7 +835,8 @@ ipcMain.handle('dialog:openFolder', async () => {
 
   ipcMain.handle('save-unidad-por-km', async (event, valor) => {
     try {
-      const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+      const exeDir = path.dirname(process.execPath);
+      const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
       if (!fs.existsSync(configDir)) {
         fs.mkdirSync(configDir, { recursive: true });
       }
@@ -813,7 +850,8 @@ ipcMain.handle('dialog:openFolder', async () => {
   
     ipcMain.handle('save-ruta-dotx', async (event, ruta) => {
       try {
-        const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+        const exeDir = path.dirname(process.execPath);
+        const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
         if (!fs.existsSync(configDir)) {
           fs.mkdirSync(configDir, { recursive: true });
         }
@@ -829,7 +867,8 @@ ipcMain.handle('dialog:openFolder', async () => {
   
     ipcMain.handle('save-ruta-destino', async (event, ruta) => {
       try {
-        const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+        const exeDir = path.dirname(process.execPath);
+        const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
         if (!fs.existsSync(configDir)) {
           fs.mkdirSync(configDir, { recursive: true });
         }
@@ -845,7 +884,8 @@ ipcMain.handle('dialog:openFolder', async () => {
 
   ipcMain.handle('save-datos-usuario', async (event, data) => {
     try {
-      const configDir = path.join(app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+      const exeDir = path.dirname(process.execPath);
+      const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
       if (!fs.existsSync(configDir)) {
         fs.mkdirSync(configDir, { recursive: true });
       }

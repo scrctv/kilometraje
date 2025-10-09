@@ -70,26 +70,40 @@ function inicializarConfiguracion() {
     // Carpeta donde está el ejecutable (en producción y desarrollo)
     const exeDir = path.dirname(process.execPath);
     const baseConfigDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
+    console.log('[INIT] Directorio del ejecutable:', exeDir);
+    console.log('[INIT] Carpeta de configuración destino:', baseConfigDir);
     // En desarrollo, los archivos base están en el proyecto; en producción, junto al exe
     let origenConfigDir = path.join(__dirname, '../ARCHIVOS DE CONFIGURACION');
+    console.log('[INIT] Carpeta de configuración origen (desarrollo):', origenConfigDir);
     if (!fs.existsSync(origenConfigDir)) {
         // Si no existe (ej: en producción), usar la misma carpeta destino
         origenConfigDir = baseConfigDir;
+        console.log('[INIT] Usando carpeta destino como origen (producción)');
     }
     if (!fs.existsSync(baseConfigDir)) {
+        console.log('[INIT] Creando carpeta de configuración...');
         fs.mkdirSync(baseConfigDir, { recursive: true });
     }
     // Copiar archivos base si no existen
     if (fs.existsSync(origenConfigDir)) {
         const archivos = fs.readdirSync(origenConfigDir);
+        console.log('[INIT] Archivos encontrados en origen:', archivos);
         archivos.forEach(nombre => {
             const origen = path.join(origenConfigDir, nombre);
             const destino = path.join(baseConfigDir, nombre);
             if (!fs.existsSync(destino) && fs.statSync(origen).isFile()) {
+                console.log('[INIT] Copiando archivo:', nombre);
                 fs.copyFileSync(origen, destino);
+            }
+            else {
+                console.log('[INIT] Archivo ya existe o no es válido:', nombre);
             }
         });
     }
+    else {
+        console.log('[INIT] Carpeta origen no existe:', origenConfigDir);
+    }
+    console.log('[INIT] Inicialización completada');
 }
 // Llamar a la inicialización al arrancar la app
 electron_1.app.whenReady().then(() => {
@@ -101,6 +115,16 @@ function buscarArchivoConfig(nombreArchivo) {
     const exeDir = path.dirname(process.execPath);
     const ruta = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION', nombreArchivo);
     return ruta;
+}
+// Helper para obtener SIEMPRE la carpeta de configuración correcta
+function obtenerCarpetaConfiguracion() {
+    const exeDir = path.dirname(process.execPath);
+    const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
+    // Asegurar que la carpeta existe
+    if (!fs.existsSync(configDir)) {
+        fs.mkdirSync(configDir, { recursive: true });
+    }
+    return configDir;
 }
 // ==================== HANDLERS DEL HISTORIAL ====================
 // Abrir ventana historial
@@ -364,7 +388,8 @@ electron_1.ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuari
             anioAnterior = anioActual - 1;
         }
         // Buscar archivo de turnos del mes anterior
-        const configDir = path.join(electron_1.app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+        const exeDir = path.dirname(process.execPath);
+        const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
         const rutaDestinoPath = path.join(configDir, 'ruta-destino.json');
         const fechasHabiles = [];
         // SIEMPRE calcular desde calendario para garantizar fechas correctas
@@ -379,9 +404,9 @@ electron_1.ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuari
         // Leer horarios de turnos
         const turnosPath = path.join(configDir, 'turnos.json');
         const turnos = fs.existsSync(turnosPath) ? JSON.parse(fs.readFileSync(turnosPath, 'utf-8')) : {};
-        // Preparar campos para la plantilla (máximo 18 filas)
+        // Preparar campos para la plantilla (máximo 23 filas)
         const datosPlantilla = {};
-        const maxFilas = 18;
+        const maxFilas = 23;
         // Tomar los 3 últimos días hábiles (orden ascendente)
         const ultimos3 = fechasHabiles.slice(0, 3).sort((a, b) => a.getTime() - b.getTime());
         const mesesNombresLargos = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
@@ -459,7 +484,8 @@ electron_1.ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuari
         // Usar la ruta de DOCX si existe, si no, usar la carpeta de los turnos
         let carpeta = path.dirname(rutaTurnos);
         try {
-            const configDir = path.join(electron_1.app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+            const exeDir = path.dirname(process.execPath);
+            const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
             const rutaDocxFile = path.join(configDir, 'ruta-meses-guardatos.json');
             if (fs.existsSync(rutaDocxFile)) {
                 const rutaDocxData = JSON.parse(fs.readFileSync(rutaDocxFile, 'utf-8'));
@@ -569,7 +595,8 @@ electron_1.ipcMain.handle('abrir-en-finder', async (event, filePath) => {
 // Leer archivo de turnos para un mes y año
 electron_1.ipcMain.handle('leer-turnos-mes', async (event, mes, anio) => {
     try {
-        const configDir = path.join(electron_1.app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+        const exeDir = path.dirname(process.execPath);
+        const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
         const rutaDestinoPath = path.join(configDir, 'ruta-destino.json');
         if (!fs.existsSync(rutaDestinoPath)) {
             return { ok: false, msg: 'No se ha configurado la ruta de destino.' };
@@ -600,7 +627,8 @@ electron_1.ipcMain.handle('leer-turnos-mes', async (event, mes, anio) => {
 // Guardar turnos seleccionados como JSON
 electron_1.ipcMain.handle('guardar-turnos', async (event, data, mes, anio) => {
     try {
-        const configDir = path.join(electron_1.app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+        const exeDir = path.dirname(process.execPath);
+        const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
         const rutaDestinoPath = path.join(configDir, 'ruta-destino.json');
         if (!fs.existsSync(rutaDestinoPath)) {
             return { ok: false, msg: 'No se ha configurado la ruta de destino.' };
@@ -682,7 +710,8 @@ electron_1.ipcMain.on('open-datosusuario-window', () => {
 });
 electron_1.ipcMain.handle('get-unidad-por-km', async () => {
     try {
-        const configDir = path.join(electron_1.app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+        const exeDir = path.dirname(process.execPath);
+        const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
         const filePath = path.join(configDir, 'unidad-por-km.json');
         if (fs.existsSync(filePath)) {
             const data = fs.readFileSync(filePath, 'utf-8');
@@ -698,7 +727,8 @@ electron_1.ipcMain.handle('get-unidad-por-km', async () => {
 // Handler para obtener la ruta de plantilla guardada
 electron_1.ipcMain.handle('get-ruta-dotx', async () => {
     try {
-        const configDir = path.join(electron_1.app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+        const exeDir = path.dirname(process.execPath);
+        const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
         const filePath = path.join(configDir, 'ruta-dotx.json');
         if (fs.existsSync(filePath)) {
             const data = fs.readFileSync(filePath, 'utf-8');
@@ -714,7 +744,8 @@ electron_1.ipcMain.handle('get-ruta-dotx', async () => {
 // Handler para obtener la ruta de destino guardada
 electron_1.ipcMain.handle('get-ruta-destino', async () => {
     try {
-        const configDir = path.join(electron_1.app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+        const exeDir = path.dirname(process.execPath);
+        const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
         const filePath = path.join(configDir, 'ruta-destino.json');
         if (fs.existsSync(filePath)) {
             const data = fs.readFileSync(filePath, 'utf-8');
@@ -784,7 +815,8 @@ electron_1.ipcMain.handle('dialog:openFolder', async () => {
 });
 electron_1.ipcMain.handle('save-unidad-por-km', async (event, valor) => {
     try {
-        const configDir = path.join(electron_1.app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+        const exeDir = path.dirname(process.execPath);
+        const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
         if (!fs.existsSync(configDir)) {
             fs.mkdirSync(configDir, { recursive: true });
         }
@@ -798,7 +830,8 @@ electron_1.ipcMain.handle('save-unidad-por-km', async (event, valor) => {
 });
 electron_1.ipcMain.handle('save-ruta-dotx', async (event, ruta) => {
     try {
-        const configDir = path.join(electron_1.app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+        const exeDir = path.dirname(process.execPath);
+        const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
         if (!fs.existsSync(configDir)) {
             fs.mkdirSync(configDir, { recursive: true });
         }
@@ -813,7 +846,8 @@ electron_1.ipcMain.handle('save-ruta-dotx', async (event, ruta) => {
 });
 electron_1.ipcMain.handle('save-ruta-destino', async (event, ruta) => {
     try {
-        const configDir = path.join(electron_1.app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+        const exeDir = path.dirname(process.execPath);
+        const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
         if (!fs.existsSync(configDir)) {
             fs.mkdirSync(configDir, { recursive: true });
         }
@@ -828,7 +862,8 @@ electron_1.ipcMain.handle('save-ruta-destino', async (event, ruta) => {
 });
 electron_1.ipcMain.handle('save-datos-usuario', async (event, data) => {
     try {
-        const configDir = path.join(electron_1.app.getAppPath(), 'ARCHIVOS DE CONFIGURACION');
+        const exeDir = path.dirname(process.execPath);
+        const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
         if (!fs.existsSync(configDir)) {
             fs.mkdirSync(configDir, { recursive: true });
         }
