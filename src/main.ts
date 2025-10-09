@@ -495,7 +495,53 @@ ipcMain.handle('generar-docx', async (event, { rutaTurnos, rutaUsuario, rutaPlan
     }
     const nombre = anio && nombreMes ? `${anio}-${nombreMes}.docx` : 'resultado-' + Date.now() + '.docx';
     const rutaSalida = path.join(carpeta, nombre);
-    fs.writeFileSync(rutaSalida, buf);
+    
+    // Intentar escribir el archivo con manejo específico de errores
+    try {
+      fs.writeFileSync(rutaSalida, buf);
+    } catch (writeError: any) {
+      // Error específico: archivo abierto en otra aplicación
+      if (writeError.code === 'EBUSY' || writeError.code === 'EPERM' || 
+          (writeError.message && (
+            writeError.message.includes('being used by another process') ||
+            writeError.message.includes('permission denied') ||
+            writeError.message.includes('file is open') ||
+            writeError.message.toLowerCase().includes('está siendo usado por otro proceso')
+          ))) {
+        return { 
+          ok: false, 
+          msg: `No se puede generar el archivo porque está abierto en otra aplicación.\n\nArchivo: ${nombre}\n\nPor favor, cierra el archivo en Word (u otra aplicación) e inténtalo de nuevo.` 
+        };
+      }
+      
+      // Error específico: falta de permisos
+      if (writeError.code === 'EACCES') {
+        return { 
+          ok: false, 
+          msg: `Sin permisos para escribir en la carpeta de destino.\n\nRuta: ${carpeta}\n\nVerifica que tengas permisos de escritura en esta ubicación.` 
+        };
+      }
+      
+      // Error específico: espacio insuficiente
+      if (writeError.code === 'ENOSPC') {
+        return { 
+          ok: false, 
+          msg: `No hay suficiente espacio en disco para guardar el archivo.\n\nArchivo: ${nombre}\n\nLibera espacio e inténtalo de nuevo.` 
+        };
+      }
+      
+      // Error específico: ruta demasiado larga
+      if (writeError.code === 'ENAMETOOLONG') {
+        return { 
+          ok: false, 
+          msg: `La ruta del archivo es demasiado larga.\n\nRuta: ${rutaSalida}\n\nUsa una ruta más corta o cambia la ubicación de destino.` 
+        };
+      }
+      
+      // Otros errores de escritura
+      throw writeError;
+    }
+    
     return { ok: true, nombre: rutaSalida };
   } catch (err: any) {
     // Si el error es ENOENT y la ruta es datosusuario.json, mostrar mensaje personalizado
@@ -610,7 +656,7 @@ ipcMain.handle('leer-turnos-mes', async (event, mes, anio) => {
     );
     
     if (archivos.length === 0) {
-      return { ok: false, msg: 'No hay datos para este mes.' };
+      return { ok: false, msg: `No hay datos creados para ${mes} ${anio}.\n\nCrea datos desde la ventana "Crear Kilometraje" antes de generar el documento.` };
     }
     
     // Tomar el primero que coincida
@@ -619,12 +665,30 @@ ipcMain.handle('leer-turnos-mes', async (event, mes, anio) => {
     
     return { ok: true, datos };
   } catch (e: any) {
-    return { ok: false, msg: 'Error al leer: ' + (e.message || e) };
+    // Errores específicos de lectura
+    if (e.code === 'ENOENT' && e.message.includes('ruta-destino.json')) {
+      return { ok: false, msg: 'La configuración de ruta de destino no existe.\n\nVe a Configuración y establece una ruta de destino válida.' };
+    }
+    
+    if (e.code === 'ENOENT') {
+      return { ok: false, msg: `No se encontró el archivo de datos.\n\nVerifica que la ruta de destino sea correcta y que existan datos para el período solicitado.` };
+    }
+    
+    if (e.code === 'EACCES') {
+      return { ok: false, msg: `Sin permisos para leer el archivo de datos.\n\nVerifica los permisos de la carpeta de destino.` };
+    }
+    
+    if (e.name === 'SyntaxError') {
+      return { ok: false, msg: `El archivo de datos está corrupto.\n\nFormato JSON inválido. Es posible que necesites recrear los datos.` };
+    }
+    
+    return { ok: false, msg: 'Error al leer datos: ' + (e.message || e) };
   }
 });
 
 // Guardar turnos seleccionados como JSON
 ipcMain.handle('guardar-turnos', async (event, data, mes, anio) => {
+  let rutaDestino = '';
   try {
     const exeDir = path.dirname(process.execPath);
     const configDir = path.join(exeDir, 'ARCHIVOS DE CONFIGURACION');
@@ -635,7 +699,7 @@ ipcMain.handle('guardar-turnos', async (event, data, mes, anio) => {
     }
     
     const rutaDestinoData = JSON.parse(fs.readFileSync(rutaDestinoPath, 'utf-8'));
-    const rutaDestino = normalizarRuta(rutaDestinoData.rutaDestino);
+    rutaDestino = normalizarRuta(rutaDestinoData.rutaDestino);
     
     if (!rutaDestino) {
       return { ok: false, msg: 'Ruta de destino no válida.' };
@@ -656,11 +720,46 @@ ipcMain.handle('guardar-turnos', async (event, data, mes, anio) => {
     let nombreBase = `${mesNombre}-${anio}-km.json`;
     let archivoFinal = path.join(carpetaAnio, nombreBase);
     
-    fs.writeFileSync(archivoFinal, JSON.stringify(data, null, 2), 'utf-8');
+    try {
+      fs.writeFileSync(archivoFinal, JSON.stringify(data, null, 2), 'utf-8');
+    } catch (writeError: any) {
+      // Error específico: archivo abierto en otra aplicación
+      if (writeError.code === 'EBUSY' || writeError.code === 'EPERM' || 
+          (writeError.message && (
+            writeError.message.includes('being used by another process') ||
+            writeError.message.includes('permission denied') ||
+            writeError.message.toLowerCase().includes('está siendo usado por otro proceso')
+          ))) {
+        return { 
+          ok: false, 
+          msg: `No se puede guardar porque el archivo está abierto en otra aplicación.\n\nArchivo: ${nombreBase}\n\nCierra el archivo e inténtalo de nuevo.` 
+        };
+      }
+      
+      // Error específico: falta de permisos
+      if (writeError.code === 'EACCES') {
+        return { 
+          ok: false, 
+          msg: `Sin permisos para escribir en la carpeta.\n\nRuta: ${carpetaAnio}\n\nVerifica los permisos de la carpeta.` 
+        };
+      }
+      
+      // Otros errores de escritura
+      throw writeError;
+    }
     
     return { ok: true, msg: `Guardado en ${archivoFinal}`, ruta: archivoFinal };
   } catch (e: any) {
-    return { ok: false, msg: 'Error al guardar: ' + e.message };
+    // Errores específicos de configuración
+    if (e.code === 'ENOENT' && e.message.includes('ruta-destino.json')) {
+      return { ok: false, msg: 'La configuración de ruta de destino no existe.\n\nVe a Configuración y establece una ruta de destino válida.' };
+    }
+    
+    if (e.code === 'ENOTDIR') {
+      return { ok: false, msg: `La ruta especificada no es una carpeta válida.\n\nRuta: ${rutaDestino || 'No definida'}\n\nVerifica la configuración.` };
+    }
+    
+    return { ok: false, msg: 'Error al guardar datos: ' + (e.message || e) };
   }
 });
 

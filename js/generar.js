@@ -161,14 +161,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
       if (todosLosTurnos.length === 0) {
-        mostrarModalMensaje('No hay CREADO un archivo para el mes seleccionado.', 'info');
+        mostrarModalMensaje('No hay datos creados para el mes seleccionado.\n\nPrimero ve a "Crear Kilometraje" y marca los días trabajados para este mes.', 'info');
         return;
       }
       // Crear archivo temporal con todos los turnos
       const tempPath = await window.electronAPI.guardarTurnos(todosLosTurnos, 'temp', anioActual);
       const rutaTurnos = typeof tempPath === 'string' ? tempPath : (tempPath?.ruta || '');
       if (!rutaTurnos) {
-        mostrarModalMensaje('No se pudo guardar el archivo temporal de turnos.', 'error');
+        mostrarModalMensaje('Error al crear archivo temporal de turnos.\n\nVerifica los permisos de la carpeta de destino.', 'error');
         return;
       }
       const resultado = await window.electronAPI.generarDocx({
